@@ -157,3 +157,5 @@ figures/
 
 # R stuff
 *.Rhistory
+
+.vscode/*
