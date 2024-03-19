@@ -7,13 +7,9 @@
 # ## Library imports
 
 # %%
-import os
-import sys
-
 import scanpy as sc
 
-sys.path.extend(["../", "."])
-from paths import DATA_DIR, FIG_DIR  # isort: skip  # noqa: E402
+from fancypackage import DATA_DIR, FIG_DIR
 
 # %% [markdown]
 # ## General settings
@@ -21,7 +17,7 @@ from paths import DATA_DIR, FIG_DIR  # isort: skip  # noqa: E402
 # %%
 SAVE_FIGURES = False
 if SAVE_FIGURES:
-    os.makedirs(FIG_DIR, exist_ok=True)
+    FIG_DIR.mkdir(parents=True, exist_ok=True)
 
 FIGURE_FORMATE = "pdf"
 
