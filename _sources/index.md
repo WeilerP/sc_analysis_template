@@ -1,6 +1,7 @@
 # Single-cell analysis template repository
 
-This repository acts as a template notebook for the analysis of single-cell data and methods.
+This repository acts as a template notebook for the analysis of single-cell data and methods; the corresponding Jupyter
+Book is rendered [here](https://weilerp.github.io/sc_analysis_template/).
 You can check the [CellRank 2 reproducibility repository](https://github.com/theislab/cellrank2_reproducibility)
 for an example repository following the same outline as this template.
 
@@ -16,6 +17,9 @@ for an example repository following the same outline as this template.
     - Project URLs
 3. Update `src/fancypackage/core/_constants.py` to include any paths relevant to your analysis and that should be accessible from any script or Jupyter notebook
 4. Update this README to include the relevant information about your project.
+5. Ensure repository settings are set up correctly to build Jupyter Book:
+    - In `Settings > Actions > General > Workflow permissions`: Allow read and write permissions.
+    - In `Settings > Pages > Build and deployment`: Set the branch to `gh-pages`.
 
 ## Installation
 

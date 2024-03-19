@@ -354,7 +354,8 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="single-cell-analysis-template-repository">
 <h1>Single-cell analysis template repository<a class="headerlink" href="#single-cell-analysis-template-repository" title="Link to this heading">#</a></h1>
-<p>This repository acts as a template notebook for the analysis of single-cell data and methods.
+<p>This repository acts as a template notebook for the analysis of single-cell data and methods; the corresponding Jupyter
+Book is rendered <a class="reference external" href="https://weilerp.github.io/sc_analysis_template/">here</a>.
 You can check the <a class="reference external" href="https://github.com/theislab/cellrank2_reproducibility">CellRank 2 reproducibility repository</a>
 for an example repository following the same outline as this template.</p>
 <section id="set-up">
@@ -373,6 +374,12 @@ for an example repository following the same outline as this template.</p>
 </li>
 <li><p>Update <code class="docutils literal notranslate"><span class="pre">src/fancypackage/core/_constants.py</span></code> to include any paths relevant to your analysis and that should be accessible from any script or Jupyter notebook</p></li>
 <li><p>Update this README to include the relevant information about your project.</p></li>
+<li><p>Ensure repository settings are set up correctly to build Jupyter Book:</p>
+<ul class="simple">
+<li><p>In <code class="docutils literal notranslate"><span class="pre">Settings</span> <span class="pre">&gt;</span> <span class="pre">Actions</span> <span class="pre">&gt;</span> <span class="pre">General</span> <span class="pre">&gt;</span> <span class="pre">Workflow</span> <span class="pre">permissions</span></code>: Allow read and write permissions.</p></li>
+<li><p>In <code class="docutils literal notranslate"><span class="pre">Settings</span> <span class="pre">&gt;</span> <span class="pre">Pages</span> <span class="pre">&gt;</span> <span class="pre">Build</span> <span class="pre">and</span> <span class="pre">deployment</span></code>: Set the branch to <code class="docutils literal notranslate"><span class="pre">gh-pages</span></code>.</p></li>
+</ul>
+</li>
 </ol>
 </section>
 <section id="installation">
