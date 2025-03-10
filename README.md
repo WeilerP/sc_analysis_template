@@ -25,10 +25,9 @@ for an example repository following the same outline as this template.
 
 ```bash
 conda create -n fancyname-pyXX python=X.X --yes && conda activate fancyname-pyXX
-pip install -e ".[dev]"
+pip install -e ".[dev,jupyter]"
 pre-commit install
 
-pip install jupyterlab ipywidgets
 python -m ipykernel install --user --name fancyname-pyXX --display-name "fancyname-pyXX"
 ```
 
