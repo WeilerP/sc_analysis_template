@@ -7,7 +7,7 @@
 # ## Library imports
 
 # %%
-import scanpy as sc
+import anndata as ad
 
 from fancypackage import DATA_DIR, FIG_DIR
 
@@ -31,7 +31,7 @@ FIGURE_FORMATE = "pdf"
 # ## Data loading
 
 # %%
-adata = sc.read(DATA_DIR / "adata.h5ad")
+adata = ad.io.read_zarr(DATA_DIR / "adata.zarr")
 adata
 
 # %% [markdown]
