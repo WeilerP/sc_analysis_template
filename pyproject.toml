@@ -7,7 +7,7 @@ name = "fancypackage"
 version = "0.0.0"
 description = "Fancy Package"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.11"
 license = {file = "LICENSE"}
 authors = [
     {name = "Jane Doe"},
