@@ -21,6 +21,7 @@ urls.Home-page = "https://github.com/url/to/repo.git"
 dependencies = [
     "anndata",
     "scanpy",
+    "zarr<3",
 ]
 
 [project.optional-dependencies]
