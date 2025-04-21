@@ -20,6 +20,7 @@ urls.Source = "https://github.com/url/to/repo.git"
 urls.Home-page = "https://github.com/url/to/repo.git"
 dependencies = [
     "anndata",
+    "dask",
     "scanpy",
     "zarr<3",
 ]
