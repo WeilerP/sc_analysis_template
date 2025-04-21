@@ -7,25 +7,14 @@ from anndata.experimental import read_elem_as_dask
 from anndata.io import read_elem
 
 
-def read_as_dask(store: Path | str, layers: str | list[str]) -> AnnData:
+def read_as_dask(store: Path | str, layers: str | list[str] | None = None) -> AnnData:
     """Read AnnData with `X` and layers read with dask.
 
     ```python
     adata = read_as_dask(file_path)
 
     obs_mask = adata.obs[column] == group
-
-    adata_subset = adata[obs_mask, :].copy()
-    uns = {}
-    for parameter in uns_keys:
-        value = adata.uns[group][parameter]
-        if value.shape == (adata_subset.n_vars,):
-            adata_subset.var[parameter] = value
-        else:
-            uns[parameter] = value
-    adata_subset.uns = uns
-
-    return adata_subset.to_memory()
+    adata_subset = adata[obs_mask, :].to_memory()
     ```
 
     Parameters
@@ -51,7 +40,9 @@ def read_as_dask(store: Path | str, layers: str | list[str]) -> AnnData:
 
     adata.X = read_elem_as_dask(group["X"])
 
-    if isinstance(layers, str):
+    if layers is None:
+        layers = adata.layers.keys()
+    elif isinstance(layers, str):
         layers = [layers]
     for layer in layers:
         adata.layers[layer] = read_elem_as_dask(group[f"layers/{layer}"])
