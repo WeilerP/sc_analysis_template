@@ -19,7 +19,7 @@ SAVE_FIGURES = False
 if SAVE_FIGURES:
     FIG_DIR.mkdir(parents=True, exist_ok=True)
 
-FIGURE_FORMATE = "pdf"
+FIGURE_FORMAT = "pdf"
 
 # %% [markdown]
 # ## Constants
