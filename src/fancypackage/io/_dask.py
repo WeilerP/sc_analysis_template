@@ -6,7 +6,7 @@ import zarr
 from zarr.hierarchy import Group
 
 from anndata import AnnData
-from anndata.experimental import read_elem_as_dask
+from anndata.experimental import read_elem_lazy
 from anndata.io import read_elem
 
 
@@ -40,7 +40,7 @@ def read_as_dask(
     obsm_keys: str | list[str] | None = None,
     varm_keys: str | list[str] | None = None,
 ) -> AnnData:
-    """Read AnnData with read with dask.
+    """Read AnnData with dask.
 
     ```python
     adata = read_as_dask(file_path)
@@ -74,18 +74,18 @@ def read_as_dask(
         varm=read_elem(group["varm"]),
     )
 
-    adata.X = read_elem_as_dask(group["X"])
+    adata.X = read_elem_lazy(group["X"])
 
     layers = _get_entries(group=group, level="layers", entries=layers)
     for layer in layers:
-        adata.layers[layer] = read_elem_as_dask(group[f"layers/{layer}"])
+        adata.layers[layer] = read_elem_lazy(group[f"layers/{layer}"])
 
     obsm_keys = _get_entries(group=group, level="obsm", entries=obsm_keys)
     for obsm_key in obsm_keys:
-        adata.obsm[obsm_key] = read_elem_as_dask(group[f"obsm/{obsm_key}"])
+        adata.obsm[obsm_key] = read_elem_lazy(group[f"obsm/{obsm_key}"])
 
     varm_keys = _get_entries(group=group, level="varm", entries=varm_keys)
     for varm_key in varm_keys:
-        adata.varm[varm_key] = read_elem_as_dask(group[f"varm/{varm_key}"])
+        adata.varm[varm_key] = read_elem_lazy(group[f"varm/{varm_key}"])
 
     return adata
