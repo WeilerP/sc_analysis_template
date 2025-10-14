@@ -86,6 +86,6 @@ def read_as_dask(
 
     varm_keys = _get_entries(group=group, level="varm", entries=varm_keys)
     for varm_key in varm_keys:
-        adata.obsm[varm_key] = read_elem_as_dask(group[f"varm/{varm_key}"])
+        adata.varm[varm_key] = read_elem_as_dask(group[f"varm/{varm_key}"])
 
     return adata
