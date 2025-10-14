@@ -22,6 +22,6 @@ def write_zarr(adata: AnnData, path: Path) -> None:
     """
     with warnings.catch_warnings():
         warnings.simplefilter("ignore", UserWarning)
-        store = zarr.ZipStore(path, mode="w")
+        store = zarr.storage.ZipStore(path, mode="w")
         adata.write_zarr(store=store)
         store.close()
