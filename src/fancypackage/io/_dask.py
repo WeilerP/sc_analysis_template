@@ -3,14 +3,14 @@ from pathlib import Path
 from typing import Generator
 
 import zarr
-from zarr.hierarchy import Group
+from zarr import Group as ZarrGroup
 
 from anndata import AnnData
 from anndata.experimental import read_elem_lazy
 from anndata.io import read_elem
 
 
-def _get_entries(group: Group, level: str, entries: str | list[str] | None) -> Generator | list[str]:
+def _get_entries(group: ZarrGroup, level: str, entries: str | list[str] | None) -> Generator | list[str]:
     """Get entries of a Zarr group, potentially subsetted.
 
     Parameters
