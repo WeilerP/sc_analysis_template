@@ -57,9 +57,9 @@ exclude = '''
 [tool.isort]
 profile = "black"
 use_parentheses = true
-known_num = "networkx,numpy,pandas,scipy,sklearn,statmodels"
+known_num = "networkx,jax,numba,numpy,pandas,pyro,scipy,sklearn,statmodels,torch"
 known_plot = "matplotlib,mplscience,mpl_toolkits,seaborn"
-known_bio = "anndata,scanpy"
+known_bio = "anndata,scanpy,scvi"
 sections = "FUTURE,STDLIB,THIRDPARTY,NUM,PLOT,BIO,FIRSTPARTY,LOCALFOLDER"
 no_lines_before = "LOCALFOLDER"
 balanced_wrapping = true
@@ -70,8 +70,7 @@ order_by_type = false
 
 [tool.ruff]
 src = ["."]
-line-length = 119
-target-version = "py38"
+line-length = 120
 select = [
     "F",  # Errors detected by Pyflakes
     "E",  # Error detected by Pycodestyle
