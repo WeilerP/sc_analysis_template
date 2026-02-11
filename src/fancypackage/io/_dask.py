@@ -1,6 +1,6 @@
+from collections.abc import Generator
 from itertools import chain
 from pathlib import Path
-from typing import Generator
 
 import zarr
 from zarr import Group as ZarrGroup
