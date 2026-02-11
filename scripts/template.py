@@ -7,12 +7,14 @@
 # ## Library imports
 
 # %%
-import anndata as ad
-
 from fancypackage import DATA_DIR, FIG_DIR
+from fancypackage.io import read_zarr
 
 # %% [markdown]
 # ## General settings
+
+# %%
+DATASET_ID = ""
 
 # %%
 SAVE_FIGURES = False
@@ -31,7 +33,7 @@ FIGURE_FORMAT = "pdf"
 # ## Data loading
 
 # %%
-adata = ad.io.read_zarr(DATA_DIR / "adata.zarr")
+adata = read_zarr(DATA_DIR / DATASET_ID / "adata.zarr.zip")
 adata
 
 # %% [markdown]
