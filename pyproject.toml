@@ -19,7 +19,7 @@ urls.Documentation = "https://todo.com"  # TODO
 urls.Source = "https://github.com/url/to/repo.git"
 urls.Home-page = "https://github.com/url/to/repo.git"
 dependencies = [
-    "anndata>=0.12.2",
+    "anndata>=0.12.5",
     "dask",
     "scanpy",
     "zarr>3",
