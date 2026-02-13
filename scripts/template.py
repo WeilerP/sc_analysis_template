@@ -14,17 +14,18 @@ from fancypackage.io import read_zarr
 # ## General settings
 
 # %%
-DATASET_ID = ""
-
-# %%
 SAVE_FIGURES = False
-if SAVE_FIGURES:
-    FIG_DIR.mkdir(parents=True, exist_ok=True)
-
-FIGURE_FORMAT = "pdf"
 
 # %% [markdown]
 # ## Constants
+
+# %%
+DATASET_ID = ""
+
+if SAVE_FIGURES:
+    (FIG_DIR / DATASET_ID).mkdir(parents=True, exist_ok=True)
+
+FIGURE_FORMAT = "pdf"
 
 # %% [markdown]
 # ## Function definitions
