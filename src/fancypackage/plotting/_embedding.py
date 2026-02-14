@@ -37,7 +37,7 @@ def plot_embedding(
 
     Returns
     -------
-    Is `return_fig==True` the Matplotlib figure object.
+    If `return_fig==True` the Matplotlib figure object.
     """
     fig = sc.pl.embedding(adata, return_fig=True, **kwargs)
 
