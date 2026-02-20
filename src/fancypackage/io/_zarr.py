@@ -6,9 +6,6 @@ import zarr
 import anndata as ad
 from anndata import AnnData
 
-ad.settings.zarr_write_format = 3
-ad.settings.auto_shard_zarr_v3 = True
-
 
 def write_zarr(adata: AnnData, path: Path) -> None:
     """Write AnnData to hierarchical Zarr array zip store.
