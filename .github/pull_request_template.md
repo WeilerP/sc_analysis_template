@@ -6,13 +6,13 @@
 
 ## Bug fixes
 
-<!-- Please give section if this PR does not fix any bugs -->
+<!-- Please remove section if this PR does not fix any bugs -->
 
 -   ...
 
 ## New
 
-<!-- Please give section if this PR does not implement a new feature -->
+<!-- Please remove section if this PR does not implement a new feature -->
 
 -   ...
 
