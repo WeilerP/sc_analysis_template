@@ -1,6 +1,6 @@
 import warnings
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import Literal, TYPE_CHECKING
 
 import zarr
 
@@ -33,20 +33,32 @@ def write_zarr(data: AnnData | MuData | TreeData, path: Path) -> None:
         store.close()
 
 
-def read_zarr(path: Path) -> AnnData:
-    """Read hierarchical Zarr array zip store to AnnData.
+def read_zarr(path: Path, backend: Literal["anndata", "mudata", "treedata"] = "anndata") -> AnnData | MuData | TreeData:
+    """Read hierarchical Zarr array zip store to AnnData-like object.
 
     Parameters
     ----------
     path
         Filename of Zarr store.
+    backend
+        Backend to use for reading the Zarr store. Supported backends are "anndata" (default), "mudata" and "treedata".
 
     Returns
     -------
-    Read AnnData object.
+    The read AnnData-like object (Anndata, MuData, or TreeData).
     """
     store = zarr.storage.ZipStore(path, mode="r")
-    adata = ad.io.read_zarr(store)
+
+    if backend == "anndata":
+        data = ad.read_zarr(store)
+    elif backend == "mudata":
+        import mudata as md
+
+        data = md.read_zarr(store)
+    elif backend == "treedata":
+        import treedata as td
+
+        data = td.read_zarr(store)
     store.close()
 
-    return adata
+    return data
