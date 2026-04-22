@@ -88,4 +88,6 @@ def read_as_dask(
     for varm_key in varm_keys:
         adata.varm[varm_key] = read_elem_lazy(group[f"varm/{varm_key}"])
 
+    store.close()
+
     return adata
