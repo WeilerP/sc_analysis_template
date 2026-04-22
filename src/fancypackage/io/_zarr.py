@@ -1,19 +1,24 @@
 import warnings
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import zarr
 
 import anndata as ad
 from anndata import AnnData
 
+if TYPE_CHECKING:
+    from mudata import MuData
+    from treedata import TreeData
 
-def write_zarr(adata: AnnData, path: Path) -> None:
-    """Write AnnData to hierarchical Zarr array zip store.
+
+def write_zarr(data: AnnData | MuData | TreeData, path: Path) -> None:
+    """Write AnnData-like object to hierarchical Zarr array zip store.
 
     Parameters
     ----------
     adata
-        AnnData to save.
+        AnnData-like object to save; supports AnnData, MuData and TreeData.
     path
         Filename of Zarr store.
 
@@ -24,7 +29,7 @@ def write_zarr(adata: AnnData, path: Path) -> None:
     with warnings.catch_warnings():
         warnings.simplefilter("ignore", UserWarning)
         store = zarr.storage.ZipStore(path, mode="w")
-        adata.write_zarr(store=store)
+        data.write_zarr(store=store)
         store.close()
 
 
