@@ -62,6 +62,16 @@ envs.hatch-test.overrides.matrix.deps.env-vars = [
   { key = "UV_PRERELEASE", value = "allow", if = [ "pre" ] },
 ]
 
+[tool.pixi]
+workspace.channels = [ "conda-forge" ]
+workspace.platforms = [ "linux-64", "osx-64", "osx-arm64", "win-64" ]
+tasks.run-pre-commit = "pre-commit run --all-files"
+tasks.setup-pre-commit = "pre-commit install"
+environments.default = { features = [ "dev", "jupyter" ], solve-group = "default" }
+environments.dev = { features = [ "dev" ], solve-group = "default" }
+environments.jupyter = { features = [ "jupyter" ], solve-group = "default" }
+environments.test = { features = [ "test" ], solve-group = "default" }
+
 [tool.ruff]
 line-length = 120
 src = [ "src" ]
