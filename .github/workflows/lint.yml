@@ -19,10 +19,24 @@ jobs:
           python-version: "3.14"
 
     - name: Setup R
+      id: setup-r
       uses: r-lib/actions/setup-r@v2
       with:
         r-version: "4.5.3"
         use-public-rspm: true
 
+    - name: Cache pre-commit environments
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/pre-commit
+        key: pre-commit-v2-${{ env.pythonLocation }}-${{ steps.setup-r.outputs.installed-r-version }}-${{ hashFiles('.pre-commit-config.yaml') }}
+        restore-keys: |
+          pre-commit-v2-${{ env.pythonLocation }}-${{ steps.setup-r.outputs.installed-r-version }}-
+
+    - name: Install pre-commit
+      run: python -m pip install pre-commit
+
     - name: Run pre-commit hooks
-      uses: pre-commit/action@v3.0.1
+      run: pre-commit run --all-files
+      env:
+        RENV_CONFIG_CACHE_ENABLED: "FALSE"
