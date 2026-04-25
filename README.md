@@ -4,6 +4,27 @@ This repository acts as a template notebook for the analysis of single-cell data
 
 You can check out the [CellRank 2](https://github.com/theislab/cellrank2_reproducibility) and [CellRank protocol](https://github.com/theislab/cellrank_protocol) reproducibility repositories for example repositories following the same outline as this template, built off an earlier version of this template repo.
 
+## Project structure
+
+- `data/`
+    - Directory containing data relevant to project
+    - Contains one subdirectory for each dataset
+    - Proposed structure: each dataset has its own subdirectory containing
+        - `raw/`: original, unaltered data that always exists unless the data has been loaded from an external data directory
+        - `processed/`: processed data from `raw/`
+        - `results`: analysis results
+- `figures/`
+    - Directory to collect generated figures
+    - Contains one subdirectory for each dataset
+- `jobs/`
+    - Directory to collect scripts for submitting HPC jobs, e.g., with sbatch, (in `jobs/scripts/`) and their generated output files (in `jobs/logs/`)
+- `notebooks/`
+    - Directory containing Jupyter notebooks
+    - Contains one subdirectory for each dataset
+- `scripts/`
+    - Directory containing Python or R scripts
+    - Contains one subdirectory for each dataset
+
 ## Setup
 
 1. Rename `src/fancypackage/`.
@@ -30,6 +51,7 @@ To install the accompanying packages with [uv](https://docs.astral.sh/uv/), you 
 ```bash
 uv venv
 uv sync --group jupyter
+uv run pre-commit install
 
 # Optional: Add jupyter kernel
 uv run ipython kernel install --user --env VIRTUAL_ENV .venv --name fancypackage --display-name "fancypackage"
@@ -39,7 +61,7 @@ If you want to specify a custom environment name and specific Python version, yo
 
 ```bash
 direnv allow
-uv venv -p X.Y
+uv venv fancypackage-pyXY -p X.Y
 uv sync --group jupyter
 uv run pre-commit install
 
@@ -75,7 +97,7 @@ pixi run ipython kernel install --user --env VIRTUAL_ENV .pixi/envs/fancypackage
 
 ## Things to keep in mind
 
-Whenever you use a new single-cell tool, add it to `known_bio` in `pyproject.toml` so `isort` can work correctly.
+Whenever you use a new single-cell tool, add it to `bio` in `pyproject.toml` so `isort` can work correctly.
 
 ## Workflow
 
