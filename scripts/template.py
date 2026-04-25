@@ -14,6 +14,7 @@ from fancypackage.io import read_zarr
 # ## General settings
 
 # %%
+SAVE_DATE = True
 SAVE_FIGURES = False
 
 # %% [markdown]
@@ -21,11 +22,12 @@ SAVE_FIGURES = False
 
 # %%
 DATASET_ID = ""
+if SAVE_DATE:
+    (DATA_DIR / DATASET_ID / "processed").mkdir(parents=True, exist_ok=True)
+    (DATA_DIR / DATASET_ID / "results").mkdir(parents=True, exist_ok=True)
 
 if SAVE_FIGURES:
     (FIG_DIR / DATASET_ID).mkdir(parents=True, exist_ok=True)
-
-FIGURE_FORMAT = "pdf"
 
 # %% [markdown]
 # ## Function definitions
@@ -40,5 +42,10 @@ adata
 # %% [markdown]
 # ## Data preprocessing
 
+# %%
+
 # %% [markdown]
 # ## More advanced data analysis
+
+# %% [markdown]
+#
