@@ -2,7 +2,7 @@ library("this.path")
 
 library("anndata")
 
-source(paste(dirname(this.dir()), "r/_constants.R", sep = "/"))
+source(file.path(dirname(this.dir()), "r/_constants.R"))
 
 # Constants
 DATASET_ID <- ""
