@@ -160,3 +160,7 @@ jobs/
 *.Rhistory
 
 .vscode/*
+
+# pixi environments
+.pixi/*
+!.pixi/config.toml
