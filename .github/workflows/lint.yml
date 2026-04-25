@@ -25,4 +25,14 @@ jobs:
         use-public-rspm: true
 
     - name: Run pre-commit hooks
+      id: precommit_initial
+      uses: pre-commit/action@v3.0.1
+      continue-on-error: true
+
+    - name: Repair renv
+      if: steps.precommit_initial.outcome == "failure"
+      run: Rscript -e "renv::repair()"
+
+    - name: Retry pre-commit
+      if: steps.precommit_initial.outcome == "failure"
       uses: pre-commit/action@v3.0.1
