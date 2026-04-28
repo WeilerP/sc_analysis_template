@@ -1,9 +1,9 @@
 from collections.abc import Generator
 from itertools import chain
-from pathlib import Path
 
 import zarr
 from zarr import Group as ZarrGroup
+from zarr.storage import StoreLike
 
 from anndata import AnnData
 from anndata.experimental import read_elem_lazy
@@ -35,7 +35,7 @@ def _get_entries(group: ZarrGroup, level: str, entries: str | list[str] | None) 
 
 
 def read_as_dask(
-    store: Path | str,
+    store: StoreLike,
     layers: str | list[str] | None = None,
     obsm_keys: str | list[str] | None = None,
     varm_keys: str | list[str] | None = None,
@@ -88,6 +88,6 @@ def read_as_dask(
     for varm_key in varm_keys:
         adata.varm[varm_key] = read_elem_lazy(group[f"varm/{varm_key}"])
 
-    store.close()
+    group.store.close()
 
     return adata
