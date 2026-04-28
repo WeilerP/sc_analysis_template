@@ -47,7 +47,7 @@ def plot_embedding(
         aspect = [aspect] * len(axes)
     elif len(axes) != len(aspect):
         logg.warning("The aspect list is shorter than the number of panels. Using `aspect='auto'` for all panels.")
-        aspect["auto"] * len(axes)
+        aspect = ["auto"] * len(axes)
 
     for ax_id, ax in enumerate(axes):
         ax.collections[0].set_rasterized(True)
