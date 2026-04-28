@@ -19,7 +19,7 @@ def write_zarr(data: AnnData | MuData | TreeData, path: Path) -> None:
 
     Parameters
     ----------
-    adata
+    data
         AnnData-like object to save; supports AnnData, MuData and TreeData.
     path
         Filename of Zarr store.
