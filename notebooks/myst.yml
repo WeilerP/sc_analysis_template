@@ -12,6 +12,5 @@ project:
 site:
     options:
         folders: true
-        logo_text: ""
-        hide_footer_links: true
+        style: _static/custom.css
     template: book-theme

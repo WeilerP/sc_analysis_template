@@ -1,0 +1,9 @@
+/* Hide "Made with MyST" branding in navbar */
+.myst-home-link {
+	display: none !important;
+}
+
+/* Hide "Made with MyST" branding in sidebar (if present) */
+.myst-made-with-myst {
+	display: none !important;
+}
