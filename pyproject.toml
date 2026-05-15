@@ -41,6 +41,8 @@ test = [
   "pytest",
   "pytest-cov",
 ]
+docs = [ "jupyter-book>=1" ]
+agentic = [ "jcodemunch-mcp" ]
 jupyter = [
   "ipywidgets",
   "jupyterlab",

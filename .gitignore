@@ -164,3 +164,5 @@ jobs/
 # pixi environments
 .pixi/*
 !.pixi/config.toml
+
+notebooks/_build
