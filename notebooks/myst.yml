@@ -1,16 +1,23 @@
 version: 1
 project:
-    title: Single-cell analysis repository
-    authors:
-        - name: Philipp Weiler
-    github: WeilerP/sc_analysis_template
-    toc:
-        - file: index.md
-        - title: Template notebook
-          children:
-              - file: template.ipynb
+  title: Single-cell analysis repository
+  # To display author(s)
+  # authors:
+  #   - name: Author One
+  #     email: author1@email.com
+  #     affiliation:
+  #       - Institute A
+  #   - name: Author Two
+  #     email: author2@email.com
+  # To link to GitHub repo
+  # github: GitHubID/REPO_NAME
+  toc:
+    - file: index.md
+    - title: Template notebook
+      children:
+          - file: template.ipynb
 site:
-    options:
-        folders: true
-        style: _static/custom.css
-    template: book-theme
+  options:
+    folders: true
+    style: _static/custom.css
+  template: book-theme
