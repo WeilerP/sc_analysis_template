@@ -25,6 +25,11 @@ jobs:
         r-version: "4.6.0"
         use-public-rspm: true
 
+    - name: Install system dependencies for R packages
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y cmake libcurl4-openssl-dev libnode-dev pandoc
+
     - name: Cache pre-commit environments
       uses: actions/cache@v4
       with:
