@@ -13,6 +13,7 @@ _default = {
     "axes.labelsize": 12,
     "axes.linewidth": 1.2,
     "axes.labelpad": 6.0,
+    "axes.grid": False,
     "font.size": 12,
     "font.family": "sans-serif",
     "font.sans-serif": ["Arial", "Helvetica", "Computer Modern Sans Serif", "DejaVU Sans"],
