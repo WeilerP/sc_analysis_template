@@ -18,6 +18,7 @@ project:
           - file: template.ipynb
 site:
   options:
+    favicon: _static/favicon.ico
     folders: true
     style: _static/custom.css
   template: book-theme
