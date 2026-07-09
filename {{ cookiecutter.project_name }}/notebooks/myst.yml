@@ -1,0 +1,18 @@
+version: 1
+project:
+  title: {{ cookiecutter.project_name }}
+  authors:
+    - name: {{ cookiecutter.author_name }}
+      email: {{ cookiecutter.author_email }}
+  github: {{ cookiecutter.github_namespace }}/{{ cookiecutter.github_repo_name }}
+  toc:
+    - file: index.md
+    - title: Template notebook
+      children:
+          - file: template.ipynb
+site:
+  options:
+    favicon: _static/favicon.ico
+    folders: true
+    style: _static/custom.css
+  template: book-theme

@@ -1,105 +1,61 @@
-# Single-cell analysis template repository
+# sc_analysis_template
 
-This repository acts as a template notebook for the analysis of single-cell data and methods; the corresponding Jupyter Book is rendered [here](https://weilerp.github.io/sc_analysis_template/).
+A [cookiecutter](https://cookiecutter.readthedocs.io/)/[cruft](https://cruft.github.io/cruft/) template for single-cell analysis projects. It scaffolds a ready-to-run project (notebooks, scripts, a `src/` package, Jupyter Book docs, pre-commit hooks) with all the project-specific values filled in automatically, and later lets you pull template improvements into a project you already generated.
 
-You can check out the [CellRank 2](https://github.com/theislab/cellrank2_reproducibility) and [CellRank protocol](https://github.com/theislab/cellrank_protocol) reproducibility repositories for example repositories following the same outline as this template, built off an earlier version of this template repo.
+You can check out the [CellRank 2](https://github.com/theislab/cellrank2_reproducibility) and [CellRank protocol](https://github.com/theislab/cellrank_protocol) reproducibility repositories for example repositories following the same outline as this template, built off an earlier version of it.
 
-## Project structure
-
-- `data/`
-    - Directory containing data relevant to project
-    - Contains one subdirectory for each dataset
-    - Proposed structure: each dataset has its own subdirectory containing
-        - `raw/`: original, unaltered data that always exists unless the data has been loaded from an external data directory
-        - `processed/`: processed data from `raw/`
-        - `results`: analysis results
-- `figures/`
-    - Directory to collect generated figures
-    - Contains one subdirectory for each dataset
-- `jobs/`
-    - Directory to collect scripts for submitting HPC jobs, e.g., with sbatch, (in `jobs/scripts/`) and their generated output files (in `jobs/logs/`)
-- `notebooks/`
-    - Directory containing Jupyter notebooks
-    - Contains one subdirectory for each dataset
-- `scripts/`
-    - Directory containing Python or R scripts
-    - Contains one subdirectory for each dataset
-
-## Setup
-
-1. Rename `src/fancypackage/`.
-2. Update `pyproject.toml` to include the correct information
-    - Project name
-    - Project description
-    - Project-specific Python requirements
-    - Project author
-    - Project maintainers
-    - Project URLs
-3. Update `src/fancypackage/core/_constants.py` to include any paths relevant to your analysis and that should be accessible from any script or Jupyter notebook
-4. Update this README to include the relevant information about your project.
-5. Ensure repository settings are set up correctly to build Jupyter Book:
-    - In `Settings > Actions > General > Workflow permissions`: Allow read and write permissions.
-    - In `Settings > Pages > Build and deployment`: Set the branch to `gh-pages`.
-6. If you use uv with a custom environment name: update the `UV_PROJECT_ENVIRONMENT` value in `.envrc`
-
-## Installation
-
-### uv
-
-To install the accompanying packages with [uv](https://docs.astral.sh/uv/), you can run
+## Create a project
 
 ```bash
+uvx cruft create gh:WeilerP/sc_analysis_template
+```
+
+You'll be prompted for:
+
+- `project_name` — human-readable project name
+- `package_name` — Python import name (derived from `project_name`, editable)
+- `package_description`, `author_name`, `author_email`
+- `github_username` — your personal GitHub account (used for PAT-based auth, see below)
+- `github_namespace` — the account or organization the repo will live under (defaults to `github_username`; override for an org-owned repo, e.g. `dpeerlab`)
+- `docs_url`, `env_name`
+
+## After generation
+
+```bash
+cd <project_name>
 uv venv
-uv sync --group jupyter
+uv sync --all-groups
 uv run pre-commit install
-
-# Optional: Add jupyter kernel
-uv run ipython kernel install --user --env VIRTUAL_ENV .venv --name fancypackage --display-name "fancypackage"
 ```
 
-If you want to specify a custom environment name and specific Python version, you may use [direnv](https://direnv.net/) and run
+For the Jupyter Book to deploy on push to `main`, set up the repository once:
+- `Settings > Actions > General > Workflow permissions`: allow read and write permissions.
+- `Settings > Pages > Build and deployment`: set `GitHub Actions` as Source.
+
+If the repo is private and you authenticate over HTTPS with a PAT:
 
 ```bash
-direnv allow
-uv venv fancypackage-pyXY -p X.Y
-uv sync --group jupyter
-uv run pre-commit install
-
-# Optional: Add jupyter kernel
-uv run ipython kernel install --user --env VIRTUAL_ENV $UV_PROJECT_ENVIRONMENT --name fancypackage-pyXY --display-name "fancypackage-pyX.Y"
+git init
+./.set_gh_remote.sh <your-PAT>
 ```
 
-### pixi
+This sets `origin` to `https://<github_username>:<PAT>@github.com/<github_namespace>/<repo>.git` — the PAT is only ever passed as a CLI argument, never stored in any generated file.
 
-To set up the project with [pixi](https://pixi.prefix.dev/latest/), run
+## Updating a project you already generated
 
 ```bash
-pixi add --pypi --editable --no-install --frozen "fancypackage @ file://$(pwd)"
-pixi install
-pixi run setup-pre-commit
-
-# Optional: Add jupyter kernel
-pixi run ipython kernel install --user --env ~/.pixi/envs/default --name fancypackage --display-name "fancypackage"
+cruft check    # is this project behind the template?
+cruft update   # apply template changes; writes *.rej files only on conflict
 ```
 
-and to use a specific Python version and environment name, run
+If `cruft update` produces `.rej` files, resolve the conflicts by hand and remove them — the generated project's pre-commit hooks (`check-merge-conflict`, `forbid-to-commit`) block committing until you do.
+
+## Developing the template
+
+Everything a generated project gets lives under `{{ cookiecutter.project_name }}/`; `cookiecutter.json` defines the prompted variables, and `hooks/pre_gen_project.py` / `hooks/post_gen_project.py` run before/after generation. To test a change:
 
 ```bash
-pixi add  --frozen --feature pyXY python=X.Y
-pixi workspace environment add fancypackage-pyXY --feature pyXY --feature dev --feature jupyter
-pixi add --pypi --editable --no-install --frozen "fancypackage @ file://$(pwd)"
-pixi install -e fancypackage-pyXY
-pixi run setup-pre-commit
-
-# Optional: Add jupyter kernel
-pixi run ipython kernel install --user --env VIRTUAL_ENV .pixi/envs/fancypackage-pyXY --name fancypackage-pyXY --display-name "fancypackage-pyX.Y"
+uvx cruft create . --no-input --output-dir /tmp/cc-out
+cd "/tmp/cc-out/Example Analysis"
+uv sync --all-groups && uv run pre-commit run --all-files
 ```
-
-## Things to keep in mind
-
-Whenever you use a new single-cell tool, add it to `bio` in `pyproject.toml` so `isort` can work correctly.
-
-## Workflow
-
-The workflow for committing a notebook is as follows: Upon committing a notebook, the pre-commit hooks format your notebook
-and generate a corresponding script. You need to add the formatted notebook and Python script to the same commit for the commit to go through. The commit will now either be successful or not. If not, your Python script was formatted by the pre-commit hooks. In that case, you need to update your notebook accordingly, unstage the Python script, and recommit the notebook. You will iterate through this process until there are no inconsistencies between the notebook and its corresponding Python script.

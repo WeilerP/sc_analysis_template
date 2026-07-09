@@ -7,8 +7,12 @@
 # ## Library imports
 
 # %%
-from fancypackage import DATA_DIR, FIG_DIR
-from fancypackage.io import read_zarr
+import importlib
+
+_import = importlib.import_module("{{ cookiecutter.package_name }}._import_shim").import_names
+
+DATA_DIR, FIG_DIR = _import("{{ cookiecutter.package_name }}", "DATA_DIR", "FIG_DIR")
+(read_zarr,) = _import("{{ cookiecutter.package_name }}.io", "read_zarr")
 
 # %% [markdown]
 # ## General settings

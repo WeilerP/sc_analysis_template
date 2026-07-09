@@ -1,8 +1,8 @@
 import logging
 
 
-def get_logger(name: str = "fancypackage", level: int = logging.INFO) -> logging.Logger:
-    """Return an idempotent, timestamped ``fancypackage`` logger.
+def get_logger(name: str = "{{ cookiecutter.package_name }}", level: int = logging.INFO) -> logging.Logger:
+    """Return an idempotent, timestamped ``{{ cookiecutter.package_name }}`` logger.
 
     Parameters
     ----------

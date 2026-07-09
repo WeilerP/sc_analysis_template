@@ -3,16 +3,16 @@ build-backend = "hatchling.build"
 requires = [ "hatchling" ]
 
 [project]
-name = "fancypackage"
+name = "{{ cookiecutter.distribution_name }}"
 version = "0.0.1"
-description = "Fancy Package"
+description = "{{ cookiecutter.package_description }}"
 readme = "README.md"
 license = { file = "LICENSE" }
 maintainers = [
-  { name = "Jane Doe", email = "jane.doe@usa.com" },
+  { name = "{{ cookiecutter.author_name }}", email = "{{ cookiecutter.author_email }}" },
 ]
 authors = [
-  { name = "Jane Doe" },
+  { name = "{{ cookiecutter.author_name }}" },
 ]
 requires-python = ">=3.12"
 classifiers = [
@@ -27,9 +27,9 @@ dependencies = [
   "scanpy",
   "zarr>3",
 ]
-urls.Documentation = "https://todo.com"
-urls.Home-page = "https://github.com/url/to/repo.git"
-urls.Source = "https://github.com/url/to/repo.git"
+urls.Documentation = "{{ cookiecutter.docs_url }}"
+urls.Home-page = "https://github.com/{{ cookiecutter.github_namespace }}/{{ cookiecutter.github_repo_name }}.git"
+urls.Source = "https://github.com/{{ cookiecutter.github_namespace }}/{{ cookiecutter.github_repo_name }}.git"
 
 [dependency-groups]
 dev = [
@@ -41,7 +41,6 @@ test = [
   "pytest-cov",
 ]
 docs = [ "jupyter-book>=1" ]
-agentic = [ "jcodemunch-mcp" ]
 jupyter = [
   "ipywidgets",
   "jupyterlab",
