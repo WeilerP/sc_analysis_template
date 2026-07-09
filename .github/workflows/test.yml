@@ -50,6 +50,18 @@ jobs:
         working-directory: /tmp/cc-out/Example Analysis
         run: uv sync --all-groups
 
+      - name: Initialize git repo for pre-commit
+        # pre-commit (and the generated project's own sync-readme-to-index hook,
+        # which calls `git show HEAD:...`) need real git metadata to run at all —
+        # `cruft create` writes plain files, it doesn't initialize a repo.
+        working-directory: /tmp/cc-out/Example Analysis
+        run: |
+          git init
+          git config user.name "Barcode McWhitelist"
+          git config user.email "barcode@doubletsnotfound.dev"
+          git add -A
+          git commit -m "chore: initialize generated project for hook smoke test"
+
       - name: Smoke-test pre-commit hooks
         working-directory: /tmp/cc-out/Example Analysis
         run: uv run pre-commit run --all-files
