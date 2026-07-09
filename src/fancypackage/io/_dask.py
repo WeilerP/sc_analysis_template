@@ -67,6 +67,8 @@ def read_as_dask(
     layers: str | list[str] | None = None,
     obsm_keys: str | list[str] | None = None,
     varm_keys: str | list[str] | None = None,
+    obsp_keys: str | list[str] | None = None,
+    varp_keys: str | list[str] | None = None,
 ) -> AnnData:
     """Read AnnData with dask.
 
@@ -87,11 +89,14 @@ def read_as_dask(
         Entries in `obsm` to read lazily (dask-backed). If `None`, every entry is read in memory.
     varm_keys
         Entries in `varm` to read lazily (dask-backed). If `None`, every entry is read in memory.
+    obsp_keys
+        Entries in `obsp` to read lazily (dask-backed). If `None`, every entry is read in memory.
+    varp_keys
+        Entries in `varp` to read lazily (dask-backed). If `None`, every entry is read in memory.
 
     Returns
     -------
-    AnnData with `X` and `layers` dask-backed; `obsm`/`varm` in memory unless requested
-    lazily.
+    AnnData with `X` and `layers` dask-backed; `obsm`/`varm`/`obsp`/`varp` in memory unless requested lazily.
     """
     group = zarr.open(store=store)
 
@@ -108,6 +113,8 @@ def read_as_dask(
 
     _read_axis_arrays(adata.obsm, group=group, level="obsm", lazy_keys=obsm_keys)
     _read_axis_arrays(adata.varm, group=group, level="varm", lazy_keys=varm_keys)
+    _read_axis_arrays(adata.obsp, group=group, level="obsp", lazy_keys=obsp_keys)
+    _read_axis_arrays(adata.varp, group=group, level="varp", lazy_keys=varp_keys)
 
     group.store.close()
 
