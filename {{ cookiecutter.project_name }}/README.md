@@ -1,6 +1,6 @@
 # {{ cookiecutter.project_name }}
 
-{{ cookiecutter.package_description }} The corresponding Jupyter Book is rendered [here]({{ cookiecutter.docs_url }}).
+{{ cookiecutter.package_description }} The corresponding Jupyter Book is rendered [here](https://{{ cookiecutter.github_namespace }}.github.io/{{ cookiecutter.github_repo_name }}/).
 
 ## Project structure
 
@@ -126,7 +126,7 @@ Whenever you use a new single-cell tool, add it to `bio` in `pyproject.toml` so 
 
 ## Documentation
 
-The Jupyter Book is deployed [here]({{ cookiecutter.docs_url }}) on every push to `main`. To build and preview it locally:
+The Jupyter Book is deployed [here](https://{{ cookiecutter.github_namespace }}.github.io/{{ cookiecutter.github_repo_name }}/) on every push to `main`. To build and preview it locally:
 
 ```bash
 cd notebooks
