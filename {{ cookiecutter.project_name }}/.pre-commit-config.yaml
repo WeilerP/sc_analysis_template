@@ -54,6 +54,8 @@ repos:
     hooks:
       - id: style-files
       - id: lintr
+        additional_dependencies:
+            - reticulate # scripts/r/_io.R calls into Python via reticulate::import()
       - id: parsable-R
       - id: no-debug-statement
       - id: no-print-statement
