@@ -12,12 +12,11 @@ uvx cruft create gh:WeilerP/sc_analysis_template
 
 You'll be prompted for:
 
-- `project_name` — human-readable project name
-- `package_name` — Python import name (derived from `project_name`, editable)
+- `project_name`: human-readable project name
+- `package_name`: Python import name (derived from `project_name`, editable)
 - `package_description`, `author_name`, `author_email`
-- `github_username` — your personal GitHub account (used for PAT-based auth, see below)
-- `github_namespace` — the account or organization the repo will live under (defaults to `github_username`; override for an org-owned repo, e.g. `dpeerlab`)
-- `docs_url`, `env_name`
+- `github_username`: your personal GitHub account (used for PAT-based auth, see below)
+- `github_namespace`: the account or organization the repo will live under (defaults to `github_username`)
 
 ## After generation
 

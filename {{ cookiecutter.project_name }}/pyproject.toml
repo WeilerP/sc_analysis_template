@@ -27,7 +27,7 @@ dependencies = [
   "scanpy",
   "zarr>3",
 ]
-urls.Documentation = "{{ cookiecutter.docs_url }}"
+urls.Documentation = "https://{{ cookiecutter.github_namespace }}.github.io/{{ cookiecutter.github_repo_name }}/"
 urls.Home-page = "https://github.com/{{ cookiecutter.github_namespace }}/{{ cookiecutter.github_repo_name }}.git"
 urls.Source = "https://github.com/{{ cookiecutter.github_namespace }}/{{ cookiecutter.github_repo_name }}.git"
 

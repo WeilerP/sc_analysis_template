@@ -8,8 +8,6 @@
 	"github_username": "my-github-username",
 	"github_namespace": "{{ cookiecutter.github_username }}",
 	"github_repo_name": "{{ cookiecutter.project_name.lower().replace(' ', '-').replace('_', '-') }}",
-	"docs_url": "https://{{ cookiecutter.github_namespace }}.github.io/{{ cookiecutter.github_repo_name }}/",
-	"env_name": "{{ cookiecutter.package_name }}-py314",
 	"year": "2026",
 	"copyright_holder": "{{ cookiecutter.author_name }}",
 	"_copy_without_render": [
