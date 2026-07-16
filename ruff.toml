@@ -1,0 +1,13 @@
+# Root-level config so jupytext's internal `ruff format -` pipe step (which runs with
+# cwd = repo root and reads from stdin, so it can't discover config by walking up from
+# a file path) picks up the same *formatter*-relevant settings as
+# {{ cookiecutter.project_name }}/pyproject.toml's [tool.ruff] block. Without this, that
+# pipe step falls back to ruff's defaults, oscillating forever against the outer
+# ruff-format hook (which correctly discovers the real config via the file path).
+#
+# Only formatter-relevant settings are mirrored here (`ruff format` never reads
+# [tool.ruff.lint.*] settings) — those are irrelevant to this specific problem, and
+# root's own ruff-check/ruff-format hooks already discover the full body config
+# correctly via per-file path resolution.
+line-length = 120
+format.docstring-code-format = true

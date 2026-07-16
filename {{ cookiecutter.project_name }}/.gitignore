@@ -149,6 +149,10 @@ dmypy.json
 *.gmt
 *.gmx
 
+data/
+figures/
+jobs/
+
 # OS specifics
 **.DS_Store
 
@@ -161,14 +165,4 @@ dmypy.json
 .pixi/*
 !.pixi/config.toml
 
-# Local example-generation output used to smoke-test the template
-/cc-out/
-/tmp-cc-out/
-
-# Generator-level ignores (this repo is a cookiecutter/cruft template, not a runnable project)
-.venv/
-.ruff_cache/
-*.egg-info/
-__pycache__/
-.mcp.json
-.envrc
+notebooks/_build

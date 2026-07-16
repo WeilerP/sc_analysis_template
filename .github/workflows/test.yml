@@ -1,0 +1,94 @@
+name: test-template-and-deploy-demo
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  generate-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup Python 3.14
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.14"
+
+      - name: Setup R
+        id: setup-r
+        uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: "4.6.0"
+          use-public-rspm: true
+
+      - name: Install system dependencies for R packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake libcurl4-openssl-dev libnode-dev pandoc
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Generate example project
+        run: uvx cruft create . --no-input --output-dir /tmp/cc-out
+
+      - name: Sync dependencies
+        working-directory: /tmp/cc-out/Example Analysis
+        run: uv sync --all-groups
+
+      - name: Initialize git repo for pre-commit
+        # pre-commit (and the generated project's own sync-readme-to-index hook,
+        # which calls `git show HEAD:...`) need real git metadata to run at all —
+        # `cruft create` writes plain files, it doesn't initialize a repo.
+        working-directory: /tmp/cc-out/Example Analysis
+        run: |
+          git init
+          git config user.name "Barcode McWhitelist"
+          git config user.email "barcode@doubletsnotfound.dev"
+          git add -A
+          git commit -m "chore: initialize generated project for hook smoke test"
+
+      - name: Smoke-test pre-commit hooks
+        working-directory: /tmp/cc-out/Example Analysis
+        run: uv run pre-commit run --all-files
+        env:
+          RENV_CONFIG_CACHE_ENABLED: "FALSE"
+
+      - name: Build the demo book
+        working-directory: /tmp/cc-out/Example Analysis/notebooks
+        run: uv run jupyter-book build --html
+
+      - name: Upload book artifact
+        if: github.ref == 'refs/heads/main'
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: "/tmp/cc-out/Example Analysis/notebooks/_build/html"
+
+  deploy:
+    needs: generate-and-build
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Setup Pages
+        uses: actions/configure-pages@v6
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5

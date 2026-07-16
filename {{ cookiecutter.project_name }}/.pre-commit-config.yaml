@@ -68,19 +68,8 @@ repos:
         language: fail
         files: '.*\.rej$'
       - id: sync-readme-to-index
-        name: "Sync {{ cookiecutter.project_name }}/README.md -> notebooks/index.md (3-way merge on conflict)"
-        entry: bash -c 'cd "{{ cookiecutter.project_name }}" && ./.sync_readme_to_index.sh'
+        name: Sync README.md -> notebooks/index.md (3-way merge on conflict)
+        entry: ./.sync_readme_to_index.sh
         language: system
-        files: '^\{\{ cookiecutter\.project_name \}\}/(README\.md|notebooks/index\.md)$'
-        pass_filenames: false
-      - id: check-import-calls
-        name: Check _import(...) bootstrap calls are internally consistent
-        entry: python3 hooks/_check_import_calls.py
-        language: system
-        types_or: [python, jupyter]
-      - id: sync-precommit-config
-        name: "Sync non-local pre-commit hooks from {{ cookiecutter.project_name }}/.pre-commit-config.yaml"
-        entry: python3 hooks/_sync_precommit_configs.py
-        language: system
-        files: '^(\.pre-commit-config\.yaml|\{\{ cookiecutter\.project_name \}\}/\.pre-commit-config\.yaml)$'
+        files: '^(README\.md|notebooks/index\.md)$'
         pass_filenames: false

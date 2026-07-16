@@ -39,7 +39,8 @@ def plot_embedding(
     -------
     If `return_fig==True` the Matplotlib figure object.
     """
-    fig = sc.pl.embedding(adata, return_fig=True, **kwargs)
+    sort_order = kwargs.pop("sort_order", False)
+    fig = sc.pl.embedding(adata, sort_order=sort_order, return_fig=True, **kwargs)
 
     fig.set_size_inches(*figsize)
     axes = fig.get_axes()
