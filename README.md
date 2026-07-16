@@ -59,3 +59,7 @@ uvx cruft create . --no-input --output-dir /tmp/cc-out
 cd "/tmp/cc-out/Example Analysis"
 uv sync --all-groups && uv run pre-commit run --all-files
 ```
+
+## License
+
+This project is licensed under the terms of the [BSD 3-Clause License](LICENSE).
