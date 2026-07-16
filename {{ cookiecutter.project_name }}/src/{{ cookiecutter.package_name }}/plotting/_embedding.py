@@ -39,7 +39,15 @@ def plot_embedding(
     -------
     If `return_fig==True` the Matplotlib figure object.
     """
+    if (
+        ("color" in kwargs.keys())
+        and not isinstance(kwargs["color"], str)
+        and (len(kwargs["color"]) > 1)
+        and (figsize[0] == figsize[1])
+    ):
+        figsize = (len(kwargs["color"]) * figsize[0], figsize[1])
     sort_order = kwargs.pop("sort_order", False)
+
     fig = sc.pl.embedding(adata, sort_order=sort_order, return_fig=True, **kwargs)
 
     fig.set_size_inches(*figsize)
