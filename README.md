@@ -7,7 +7,7 @@ You can check out the [CellRank 2](https://github.com/theislab/cellrank2_reprodu
 ## Create a project
 
 ```bash
-uvx cruft create gh:WeilerP/sc_analysis_template
+uvx cruft create https://github.com/WeilerP/sc_analysis_template
 ```
 
 You'll be prompted for:
