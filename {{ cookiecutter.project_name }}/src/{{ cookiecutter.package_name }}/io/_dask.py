@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 from collections.abc import Generator
 from itertools import chain
-from typing import Literal
+from typing import Literal, TYPE_CHECKING
 
 import zarr
 from zarr import Group as ZarrGroup
@@ -9,6 +11,9 @@ from zarr.storage import StoreLike
 from anndata import AnnData
 from anndata.experimental import read_elem_lazy
 from anndata.io import read_elem
+
+if TYPE_CHECKING:
+    from treedata import TreeData
 
 
 def _get_entries(group: ZarrGroup, level: str, entries: str | list[str] | None) -> Generator | list[str]:
@@ -53,8 +58,10 @@ def _read_axis_arrays(
         these mappings are small (n_obs/n_var x k) and going lazy mainly breaks downstream
         array operations such as plotting.
     """
-    if level not in ("obsm", "varm"):
-        raise ValueError(f"Argument `level` needs to be either `'obsm'` or `'varm'` but is {level}.")
+    if level not in ("layers", "obsm", "obsp", "varm", "varp"):
+        raise ValueError(
+            f"Argument `level` needs to be in `'layers'`, `'obsm'`, `'obsp'`, `'varm'` or `'varp'` but is {level}."
+        )
 
     lazy = {lazy_keys} if isinstance(lazy_keys, str) else set(lazy_keys or [])
     for key in chain(group[level].group_keys(), group[level].array_keys()):
@@ -69,7 +76,8 @@ def read_as_dask(
     varm_keys: str | list[str] | None = None,
     obsp_keys: str | list[str] | None = None,
     varp_keys: str | list[str] | None = None,
-) -> AnnData:
+    backend: Literal["anndata", "treedata"] = "anndata",
+) -> AnnData | TreeData:
     """Read AnnData with dask.
 
     ```python
@@ -90,32 +98,51 @@ def read_as_dask(
     varm_keys
         Entries in `varm` to read lazily (dask-backed). If `None`, every entry is read in memory.
     obsp_keys
-        Entries in `obsp` to read lazily (dask-backed). If `None`, every entry is read in memory.
+        Entries in `obsp` to read lazily (dask-backed). If `None`, every entry is read with dask.
     varp_keys
-        Entries in `varp` to read lazily (dask-backed). If `None`, every entry is read in memory.
+        Entries in `varp` to read lazily (dask-backed). If `None`, every entry is read with dask.
 
     Returns
     -------
-    AnnData with `X` and `layers` dask-backed; `obsm`/`varm`/`obsp`/`varp` in memory unless requested lazily.
+    AnnData-like object with `X`, `layers`, `obsp`, and `varp` dask-backed; `obsm`/`varm` in memory unless requested
+    lazily.
     """
     group = zarr.open(store=store)
 
-    adata = AnnData(
+    if backend == "anndata":
+        DataClass = AnnData
+    elif backend == "treedata":
+        from treedata import TreeData
+        from treedata._core.read import _read_axis_trees_zarr
+
+        DataClass = TreeData
+
+    data = DataClass(
         obs=read_elem(group["obs"]),
         var=read_elem(group["var"]),
         uns=read_elem(group["uns"]),
     )
 
-    adata.X = read_elem_lazy(group["X"])
+    if backend == "treedata":
+        if "obst" in group.keys():
+            data.obst = _read_axis_trees_zarr(group["obst"])
+        if "vart" in group.keys():
+            data.vart = _read_axis_trees_zarr(group["vart"])
 
-    for layer in _get_entries(group=group, level="layers", entries=layers):
-        adata.layers[layer] = read_elem_lazy(group[f"layers/{layer}"])
+    data.X = read_elem_lazy(group["X"])
 
-    _read_axis_arrays(adata.obsm, group=group, level="obsm", lazy_keys=obsm_keys)
-    _read_axis_arrays(adata.varm, group=group, level="varm", lazy_keys=varm_keys)
-    _read_axis_arrays(adata.obsp, group=group, level="obsp", lazy_keys=obsp_keys)
-    _read_axis_arrays(adata.varp, group=group, level="varp", lazy_keys=varp_keys)
+    lazy_by_default = {"layers", "obsp", "varp"}
+    for level, lazy_keys in (
+        ("layers", layers),
+        ("obsm", obsm_keys),
+        ("varm", varm_keys),
+        ("obsp", obsp_keys),
+        ("varp", varp_keys),
+    ):
+        if level in lazy_by_default:
+            lazy_keys = _get_entries(group=group, level=level, entries=lazy_keys)
+        _read_axis_arrays(getattr(data, level), group=group, level=level, lazy_keys=lazy_keys)
 
     group.store.close()
 
-    return adata
+    return data
