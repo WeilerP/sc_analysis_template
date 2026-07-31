@@ -81,6 +81,7 @@ def read_as_dask(
     """Read AnnData with dask.
 
     ```python
+    store = zarr.storage.ZipStore(path / to / store.zarr.zip)
     adata = read_as_dask(file_path)
 
     obs_mask = adata.obs[column] == group
