@@ -9,29 +9,30 @@ Template repository for analysing single-cell data.
 ## Project structure
 
 - `data/`
-    - Directory containing data relevant to project
-    - Contains one subdirectory for each dataset
-    - Each dataset-specific subdirectory uses the following structure
-        - `raw/`: original, unaltered data that always exists unless the data has been loaded from an external data directory
-        - `processed/`: processed data from `raw/`
-        - `results`: analysis results
+  - Directory containing data relevant to project
+  - Contains one subdirectory for each dataset
+  - Each dataset-specific subdirectory uses the following structure
+    - `raw/`: original, unaltered data that always exists unless the data has been loaded from an external data directory
+    - `processed/`: processed data from `raw/`
+    - `results`: analysis results
 - `figures/`
-    - Directory to collect generated figures
-    - Contains one subdirectory for each dataset
+  - Directory to collect generated figures
+  - Contains one subdirectory for each dataset
 - `jobs/`
-    - Directory to collect scripts for submitting HPC jobs, e.g., with sbatch, (in `jobs/scripts/`) and their generated output files (in `jobs/logs/`)
+  - Directory to collect scripts for submitting HPC jobs, e.g., with sbatch, (in `jobs/scripts/`) and their generated output files (in `jobs/logs/`)
 - `notebooks/`
-    - Directory containing Jupyter notebooks
-    - Contains one subdirectory for each dataset
+  - Directory containing Jupyter notebooks
+  - Contains one subdirectory for each dataset
 - `scripts/`
-    - Directory containing Python or R scripts
-    - Contains one subdirectory for each dataset
+  - Directory containing Python or R scripts
+  - Contains one subdirectory for each dataset
 
 **Note:**
+
 - The dataset-specific subdirectories in `data/`, `figures/`, `notebooks/`, `scripts` all have the same name
 - Before committing a notebook with git, it is converted into a corresponding script in `scripts/` via pre-commit hooks (jupytext); jupytext also keeps them in sync in subsequent commits
-    - Scripts use `# %%` cell delimiters (`py:percent` format).
-    - See `notebooks/template.ipynb` ↔ `scripts/template.py` as an example
+  - Scripts use `# %%` cell delimiters (`py:percent` format).
+  - See `notebooks/template.ipynb` ↔ `scripts/template.py` as an example
 
 ## Setup
 
