@@ -17,6 +17,14 @@ BOOTSTRAP_RE = re.compile(
 )
 CALL_RE = re.compile(r"^(?P<lhs>.*)= _import\((?P<args>[^()]*)\)[ \t]*$", re.MULTILINE)
 
+# Same idea for pyproject.toml's pixi self-dependency, which names the package in a TOML *key*
+# position: `pypi-dependencies."{{ cookiecutter.package_name }}"`. A raw Jinja token is not a legal
+# bare key, and that file doubles as ruff's config, so it must stay parseable while unrendered —
+# hence the quotes. Once rendered the key is a legal bare key, and pyproject-fmt (which runs in the
+# generated project, where the template's exclude no longer matches) strips the quotes itself. This
+# hook does it up front so the generated project is already canonical and its hooks pass unmodified.
+PIXI_KEY_RE = re.compile(r"^(pypi-dependencies\.)\"([^\"]+)\"(\s*=)", re.MULTILINE)
+
 
 def _replace_call(match: re.Match[str]) -> str:
     """Reconstruct a plain ``from module import names`` statement from an ``_import(...)`` call.
@@ -99,6 +107,27 @@ def prettify_notebook(path: str) -> None:
         f.write("\n")
 
 
+def unquote_pixi_key(path: str = "pyproject.toml") -> None:
+    """Rewrite the quoted pixi self-dependency key into a bare TOML key in place.
+
+    Parameters
+    ----------
+    path
+        Path to the rendered ``pyproject.toml``.
+
+    Returns
+    -------
+    Nothing, only rewrites the file.
+    """
+    with open(path) as f:
+        content = f.read()
+    unquoted, n_replaced = PIXI_KEY_RE.subn(r"\1\2\3", content)
+    if n_replaced != 1:
+        raise ValueError(f"expected exactly one quoted `pypi-dependencies.<name>` key in {path}, found {n_replaced}")
+    with open(path, "w") as f:
+        f.write(unquoted)
+
+
 def main() -> None:
     """Prettify all scripts/notebooks, delete the import shim, and set script permissions."""
     for root, _dirs, filenames in os.walk("."):
@@ -108,6 +137,8 @@ def main() -> None:
                 prettify_script(path)
             elif name.endswith(".ipynb"):
                 prettify_notebook(path)
+
+    unquote_pixi_key()
 
     shim_path = os.path.join("src", PACKAGE_NAME, "_import_shim.py")
     if os.path.exists(shim_path):
