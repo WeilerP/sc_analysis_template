@@ -65,6 +65,7 @@ envs.hatch-test.overrides.matrix.deps.env-vars = [
 [tool.pixi]
 workspace.channels = [ "conda-forge" ]
 workspace.platforms = [ "linux-64", "osx-64", "osx-arm64", "win-64" ]
+pypi-dependencies."{{ cookiecutter.package_description }}" = { path = ".", editable = true }
 tasks.run-pre-commit = "pre-commit run --all-files"
 tasks.setup-pre-commit = "pre-commit install"
 environments.default = { features = [ "dev", "jupyter" ], solve-group = "default" }
