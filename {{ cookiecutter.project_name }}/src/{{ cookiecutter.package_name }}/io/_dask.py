@@ -82,7 +82,7 @@ def read_as_dask(
 
     ```python
     store = zarr.storage.ZipStore(path / to / store.zarr.zip)
-    adata = read_as_dask(file_path)
+    adata = read_as_dask(store=store)
 
     obs_mask = adata.obs[column] == group
     adata_subset = adata[obs_mask, :].to_memory()
