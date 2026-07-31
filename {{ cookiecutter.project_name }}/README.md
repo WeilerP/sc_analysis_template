@@ -55,7 +55,6 @@ uv run ipython kernel install --user --env VIRTUAL_ENV $UV_PROJECT_ENVIRONMENT -
 To set up the project with [pixi](https://pixi.prefix.dev/latest/), run
 
 ```bash
-pixi add --pypi --editable --no-install --frozen "{{ cookiecutter.package_name }} @ file://$(pwd)"
 pixi install
 pixi run setup-pre-commit
 
