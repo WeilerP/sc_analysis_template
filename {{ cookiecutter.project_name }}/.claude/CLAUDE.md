@@ -54,7 +54,7 @@ When confused: stop, think, present theories, get signoff. Never silently retry 
 
 ## Project overview
 
-fibrysis: Analysis of cancer cell-fibroblast interactions within the CNS
+{{ cookiecutter.project_name }}: {{ cookiecutter.package_description }}
 
 ## Project structure
 
