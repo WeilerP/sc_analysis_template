@@ -1,5 +1,6 @@
 from typing import Literal
 
+from matplotlib.collections import PathCollection
 from matplotlib.figure import Figure
 
 import scanpy as sc
@@ -51,16 +52,19 @@ def plot_embedding(
     fig = sc.pl.embedding(adata, sort_order=sort_order, return_fig=True, **kwargs)
 
     fig.set_size_inches(*figsize)
-    axes = fig.get_axes()
-    if len(axes) > 0 and isinstance(aspect, (str, float)):
-        aspect = [aspect] * len(axes)
-    elif len(axes) != len(aspect):
-        logg.warning("The aspect list is shorter than the number of panels. Using `aspect='auto'` for all panels.")
-        aspect = ["auto"] * len(axes)
+    # scatter axes <-> PathCollection; colorbar axes <-> QuadMesh
+    data_axes = [ax for ax in fig.get_axes() if any(isinstance(c, PathCollection) for c in ax.collections)]
 
-    for ax_id, ax in enumerate(axes):
-        ax.collections[0].set_rasterized(True)
-        ax.set_aspect(aspect[ax_id])
+    if isinstance(aspect, (str, float)):
+        aspect = [aspect] * len(data_axes)
+    elif len(data_axes) != len(aspect):
+        logg.warning("The aspect list does not match the number of panels. Using `aspect='auto'` for all panels.")
+        aspect = ["auto"] * len(data_axes)
+
+    for ax, asp in zip(data_axes, aspect, strict=True):
+        next(c for c in ax.collections if isinstance(c, PathCollection)).set_rasterized(True)
+        # adjustable='box' shrinks the axes frame instead of adjusting data limits,
+        ax.set_aspect(asp, adjustable="box")
 
     if return_fig:
         return fig
