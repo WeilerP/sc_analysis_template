@@ -17,6 +17,21 @@ BOOTSTRAP_RE = re.compile(
 )
 CALL_RE = re.compile(r"^(?P<lhs>.*)= _import\((?P<args>[^()]*)\)[ \t]*$", re.MULTILINE)
 
+# Modules *inside* the package have the same problem in the other direction: they can reach a sibling
+# subpackage with a parent-relative import, but not name the package absolutely while unrendered. The
+# relative form trips ruff's TID252, so the template writes it with an explicit suppression and this hook
+# rewrites it into the absolute import the rule asks for, dropping the then-unnecessary suppression.
+PARENT_IMPORT_RE = re.compile(
+    r"^from \.\.(?P<module>[\w.]+) import (?P<names>[^#\n]+?)[ \t]*# noqa: TID252[ \t]*$",
+    re.MULTILINE,
+)
+# `PARENT_IMPORT_RE` requires the trailing suppression comment to name TID252 alone and to end the line, so
+# a variant carrying further codes or trailing text keeps its suppression and would silently ship a
+# non-canonical relative import. This looser pattern catches whatever the strict one left behind. It
+# deliberately anchors on `from ..` so it does not fire on the pattern string and comments above, which this
+# hook is itself checked against by `_check_import_calls.py`.
+UNREWRITTEN_IMPORT_RE = re.compile(r"^from \.\..*# noqa: TID252.*$", re.MULTILINE)
+
 # Same idea for pyproject.toml's pixi self-dependency, which names the package in a TOML *key*
 # position: `pypi-dependencies."{{ cookiecutter.package_name }}"`. A raw Jinja token is not a legal
 # bare key, and that file doubles as ruff's config, so it must stay parseable while unrendered —
@@ -47,8 +62,44 @@ def _replace_call(match: re.Match[str]) -> str:
     return f"from {module} import {', '.join(names)}"
 
 
+def _absolutize_import(match: re.Match[str]) -> str:
+    """Reconstruct an absolute ``from package.module import names`` statement from a relative one.
+
+    Parameters
+    ----------
+    match
+        Regex match against ``PARENT_IMPORT_RE``, capturing the parent-relative module path
+        (``module``) and the imported names (``names``).
+
+    Returns
+    -------
+    The equivalent absolute import statement, without the ``# noqa: TID252`` suppression.
+    """
+    return f"from {PACKAGE_NAME}.{match.group('module')} import {match.group('names')}"
+
+
+def _assert_imports_rewritten(text: str) -> None:
+    """Fail if a suppressed parent-relative import survived rewriting.
+
+    Parameters
+    ----------
+    text
+        Source text that ``PARENT_IMPORT_RE`` has already been applied to.
+
+    Returns
+    -------
+    Nothing. Raises ``ValueError`` naming every import left un-absolutized.
+    """
+    leftover = UNREWRITTEN_IMPORT_RE.findall(text)
+    if leftover:
+        raise ValueError(
+            "cannot absolutize suppressed relative import(s); `# noqa: TID252` must be the entire trailing "
+            "comment: " + "; ".join(line.strip() for line in leftover)
+        )
+
+
 def prettify_text(text: str) -> str:
-    """Rewrite ``_import(...)`` bootstrap calls in ``text`` into plain import statements.
+    """Rewrite ``_import(...)`` bootstrap calls and suppressed relative imports into plain imports.
 
     Parameters
     ----------
@@ -57,10 +108,13 @@ def prettify_text(text: str) -> str:
 
     Returns
     -------
-    ``text`` with every ``_import(...)`` call site replaced by a plain import
-    statement and the now-unused bootstrap lines removed.
+    ``text`` with every ``_import(...)`` call site and every ``# noqa: TID252``-suppressed
+    parent-relative import replaced by a plain import statement, and the now-unused bootstrap
+    lines removed. Raises ``ValueError`` if a suppressed import could not be rewritten.
     """
     text = CALL_RE.sub(_replace_call, text)
+    text = PARENT_IMPORT_RE.sub(_absolutize_import, text)
+    _assert_imports_rewritten(text)
     return BOOTSTRAP_RE.sub("", text)
 
 
