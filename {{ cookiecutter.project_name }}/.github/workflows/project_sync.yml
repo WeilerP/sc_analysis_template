@@ -1,0 +1,124 @@
+name: Project sync
+
+on:
+  pull_request:
+    types: [opened, ready_for_review, closed]
+
+permissions:
+  contents: read
+  pull-requests: read
+  issues: read
+
+jobs:
+  sync-project-status:
+    runs-on: ubuntu-latest
+    if: >
+      (github.event.action == 'ready_for_review') ||
+      (github.event.action == 'opened' && github.event.pull_request.draft == false) ||
+      (github.event.action == 'closed' && github.event.pull_request.merged == false)
+    env:
+      PROJECT_OWNER: ${{ github.repository_owner }}
+      PROJECT_NUMBER: ${{ vars.PROJECT_NUMBER }}
+      REPO_NAME: ${{ github.event.repository.name }}
+    steps:
+      - name: Check PROJECTS_TOKEN is configured
+        env:
+          TOKEN_SET: ${{ secrets.PROJECTS_TOKEN != '' }}
+        run: |
+          if [ "$TOKEN_SET" != "true" ]; then
+            echo "::error::PROJECTS_TOKEN secret is not set. See the github-issue-management skill for setup instructions."
+            exit 1
+          fi
+
+      - name: Determine target status
+        id: target
+        env:
+          EVENT_ACTION: ${{ github.event.action }}
+        run: |
+          if [ "$EVENT_ACTION" = "closed" ]; then
+            echo "status=Ready" >> "$GITHUB_OUTPUT"
+          else
+            echo "status=In review" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Find issues this PR closes
+        id: closing
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          response=$(gh api graphql -f query='
+            query($owner: String!, $repo: String!, $pr: Int!) {
+              repository(owner: $owner, name: $repo) {
+                pullRequest(number: $pr) {
+                  closingIssuesReferences(first: 50) {
+                    nodes { number repository { nameWithOwner } }
+                  }
+                }
+              }
+            }' -f owner="$PROJECT_OWNER" -f repo="$REPO_NAME" -F pr="$PR_NUMBER")
+
+          numbers=$(echo "$response" | jq -r --arg repo "$PROJECT_OWNER/$REPO_NAME" \
+            '.data.repository.pullRequest.closingIssuesReferences.nodes[] | select(.repository.nameWithOwner==$repo) | .number')
+
+          if [ -z "$numbers" ]; then
+            echo "No linked closing issues found for PR #$PR_NUMBER — nothing to sync."
+          fi
+
+          echo "numbers<<EOF" >> "$GITHUB_OUTPUT"
+          echo "$numbers" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+
+      - name: Resolve project and status field ids
+        id: resolve
+        if: steps.closing.outputs.numbers != ''
+        env:
+          GH_TOKEN: ${{ secrets.PROJECTS_TOKEN }}
+          TARGET_STATUS: ${{ steps.target.outputs.status }}
+        run: |
+          project_id=$(gh project view "$PROJECT_NUMBER" --owner "$PROJECT_OWNER" --format json --jq '.id')
+
+          field_json=$(gh project field-list "$PROJECT_NUMBER" --owner "$PROJECT_OWNER" --format json \
+            --jq '.fields[] | select(.name=="Status")')
+
+          if [ -z "$field_json" ]; then
+            echo "::error::No field named 'Status' found on project $PROJECT_NUMBER (owner $PROJECT_OWNER)."
+            exit 1
+          fi
+
+          field_id=$(echo "$field_json" | jq -r '.id')
+          option_id=$(echo "$field_json" | jq -r --arg name "$TARGET_STATUS" '.options[] | select(.name==$name) | .id')
+
+          if [ -z "$option_id" ]; then
+            echo "::error::No Status option named '$TARGET_STATUS' found on project $PROJECT_NUMBER."
+            exit 1
+          fi
+
+          echo "project_id=$project_id" >> "$GITHUB_OUTPUT"
+          echo "field_id=$field_id" >> "$GITHUB_OUTPUT"
+          echo "option_id=$option_id" >> "$GITHUB_OUTPUT"
+
+      - name: Sync each linked issue's project status
+        if: steps.closing.outputs.numbers != ''
+        env:
+          GH_TOKEN: ${{ secrets.PROJECTS_TOKEN }}
+          REPO_URL: ${{ github.event.repository.html_url }}
+          PROJECT_ID: ${{ steps.resolve.outputs.project_id }}
+          FIELD_ID: ${{ steps.resolve.outputs.field_id }}
+          OPTION_ID: ${{ steps.resolve.outputs.option_id }}
+          TARGET_STATUS: ${{ steps.target.outputs.status }}
+          ISSUE_NUMBERS: ${{ steps.closing.outputs.numbers }}
+        run: |
+          while IFS= read -r issue_number; do
+            [ -z "$issue_number" ] && continue
+            echo "Syncing issue #$issue_number -> $TARGET_STATUS"
+
+            issue_url="$REPO_URL/issues/$issue_number"
+            item_id=$(gh project item-add "$PROJECT_NUMBER" --owner "$PROJECT_OWNER" --url "$issue_url" --format json --jq '.id')
+
+            gh project item-edit \
+              --id "$item_id" \
+              --project-id "$PROJECT_ID" \
+              --field-id "$FIELD_ID" \
+              --single-select-option-id "$OPTION_ID"
+          done <<< "$ISSUE_NUMBERS"
