@@ -51,5 +51,4 @@ adata
 # %% [markdown]
 # ## More advanced data analysis
 
-# %% [markdown]
-#
+# %%
