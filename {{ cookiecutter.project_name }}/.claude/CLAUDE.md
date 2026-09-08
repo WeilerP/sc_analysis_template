@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 When anything fails: STOP. Explain to Q (the user). Wait for confirmation before proceeding.
 
-## Before consequential actions
+## Before **consequential** actions
 
 For actions that are hard to reverse or change shared state (not trivial reads):
 
@@ -94,7 +94,7 @@ uv sync --all-groups
 uv run pre-commit install
 ```
 
-GitHub PAT used for private repo authenticated? Set the remote with `./.set_gh_remote.sh <PAT>` (the PAT is only ever passed as a CLI argument, never stored).
+See `README.md`'s "Repository setup" section for creating the GitHub repo, authenticating via `gh`, and syncing the issue-label taxonomy.
 
 ## Development commands
 

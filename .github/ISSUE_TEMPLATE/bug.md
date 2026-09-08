@@ -32,8 +32,16 @@ assignees: ""
 
 <details> <summary> Versions </summary>
 
-```pytb
-# Paste the ouput of tradeseq.__version__ and all relevant versions here
+Run this in a notebook, then click the "Copy as Markdown" button and paste the result here:
+
+```pycon
+import gmi, session_info2; session_info2.session_info(dependencies=True)
+```
+
+Or from the pixi environment shell (do not use `uvx` for this — it won't see gmi's installed dependencies):
+
+```shell
+session-info2 -f markdown
 ```
 
 </details>

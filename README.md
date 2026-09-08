@@ -15,36 +15,18 @@ You'll be prompted for:
 - `project_name`: human-readable project name
 - `package_name`: Python import name (derived from `project_name`, editable)
 - `package_description`, `author_name`, `author_email`
-- `github_username`: your personal GitHub account (used for PAT-based auth, see below)
+- `github_username`: your personal GitHub account
 - `github_namespace`: the account or organization the repo will live under (defaults to `github_username`)
 
 ## After generation
 
-```bash
-cd <project_name>
-uv venv
-uv sync --all-groups
-uv run pre-commit install
-```
-
-For the Jupyter Book to deploy on push to `main`, set up the repository once:
-- `Settings > Actions > General > Workflow permissions`: allow read and write permissions.
-- `Settings > Pages > Build and deployment`: set `GitHub Actions` as Source.
-
-If the repo is private and you authenticate over HTTPS with a PAT:
-
-```bash
-git init
-./.set_gh_remote.sh <your-PAT>
-```
-
-This sets `origin` to `https://<github_username>:<PAT>@github.com/<github_namespace>/<repo>.git` — the PAT is only ever passed as a CLI argument, never stored in any generated file.
+`cd` into the generated directory, and follow the installation and setup instructions outlined in the project's README.
 
 ## Updating a project you already generated
 
 ```bash
-cruft check    # is this project behind the template?
-cruft update   # apply template changes; writes *.rej files only on conflict
+uvx cruft check    # is this project behind the template?
+uvx cruft update   # apply template changes; writes *.rej files only on conflict
 ```
 
 If `cruft update` produces `.rej` files, resolve the conflicts by hand and remove them — the generated project's pre-commit hooks (`check-merge-conflict`, `forbid-to-commit`) block committing until you do.
