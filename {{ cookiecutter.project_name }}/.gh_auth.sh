@@ -3,5 +3,5 @@ if ! gh auth status --hostname github.com >/dev/null 2>&1; then
   echo
   gh auth login --with-token <<< "$PAT"
   unset PAT
-  gh auth setup-git --hostname github.com
 fi
+gh auth setup-git --hostname github.com
