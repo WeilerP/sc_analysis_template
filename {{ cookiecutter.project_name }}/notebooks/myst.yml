@@ -9,7 +9,7 @@ project:
     - file: index.md
     - title: Template notebook
       children:
-          - file: template.ipynb
+          - file: templates/template.ipynb
 site:
   options:
     favicon: _static/favicon.ico
