@@ -195,7 +195,13 @@ def main() -> None:
     if os.path.exists(shim_path):
         os.remove(shim_path)
 
-    for script in [".set_gh_remote.sh", ".setup_gh_repo.sh", ".sync_gh_labels.sh", ".sync_readme_to_index.sh"]:
+    for script in [
+        ".set_gh_remote.sh",
+        ".setup_gh_repo.sh",
+        ".setup_git_repo.sh",
+        ".sync_gh_labels.sh",
+        ".sync_readme_to_index.sh",
+    ]:
         os.chmod(script, 0o755)
 
 
