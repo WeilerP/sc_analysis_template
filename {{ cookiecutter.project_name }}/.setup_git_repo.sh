@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-git init
+git init -b main
 
 existing_name="$(git config user.name 2>/dev/null || true)"
 existing_email="$(git config user.email 2>/dev/null || true)"

@@ -54,6 +54,9 @@ if [ "$create" = true ]; then
 fi
 
 ./.set_gh_remote.sh
+if [ "$create" = true ]; then
+  git push -u origin HEAD:main
+fi
 sync_args=()
 [ "$keep_extra_labels" = true ] && sync_args+=(--keep-extra-labels)
 ./.sync_gh_labels.sh "${sync_args[@]}"

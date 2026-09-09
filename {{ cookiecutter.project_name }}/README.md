@@ -27,10 +27,11 @@
 
 ### GitHub
 
-The project includes a script to automate setting up a corresponding GitHub repository that consists of three steps:
+The project includes a script to automate setting up a corresponding GitHub repository that consists of four steps:
 1. repository creation (optional)
 2. setting the remote
-3. mimicking the predefined labels `bug`, `feature`, `enhancement`, `refactor`, `chore`, `performance`, `debugging`, `research`, `documentation`, `duplicate`, `invalid`, `wontfix`.
+3. pushing the initial commit to `main` if the repository was just created
+4. mimicking the predefined labels `bug`, `feature`, `enhancement`, `refactor`, `chore`, `performance`, `debugging`, `research`, `documentation`, `duplicate`, `invalid`, `wontfix`.
 
 The script uses the [GitHub CLI](https://cli.github.com/), and at least a [fine-grained personal access token](https://github.com/settings/personal-access-tokens/new) (PAT) with:
 
