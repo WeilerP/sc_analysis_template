@@ -23,6 +23,46 @@
     - Directory containing Python or R scripts
     - Contains one subdirectory for each dataset
 
+## Repository setup
+
+### GitHub
+
+The project includes a script to automate setting up a corresponding GitHub repository that consists of four steps:
+1. repository creation (optional)
+2. setting the remote
+3. pushing the initial commit to `main` if the repository was just created
+4. mimicking the predefined labels `bug`, `feature`, `enhancement`, `refactor`, `chore`, `performance`, `debugging`, `research`, `documentation`, `duplicate`, `invalid`, `wontfix`.
+
+The script uses the [GitHub CLI](https://cli.github.com/), and at least a [fine-grained personal access token](https://github.com/settings/personal-access-tokens/new) (PAT) with:
+
+- **Expiration:** shortest custom date available.
+- **Repository access:**
+  - the repo does not yet exist &rarr; *All repositories*
+  - the repo exists &rarr; *Only select repositories* with the corresponding repository selected
+- **Permissions:** when creating the repo, the following three permissions are required; omit the first one otherwise.
+
+| Permission | Level |
+| --- | --- | --- |
+| Administration | Read and write |
+| Contents | Read and write |
+| Issues | Read and write |
+
+The script creates a private repository via the `--create` argument; for a public one pass `--public` in addition; to keep any additional labels, pass `--keep-extra-labels`.
+
+```bash
+./.setup_gh_repo.sh --create
+```
+
+The PAT that the script asked for is never exposed outside of `gh`'s credential helper. To only sync labels, run `./.sync_gh_labels.sh`.
+
+For the Jupyter Book to deploy on push to `main`, set up the repository once:
+- `Settings > Actions > General > Workflow permissions`: allow read and write permissions.
+- `Settings > Pages > Build and deployment`: set `GitHub Actions` as Source.
+
+### Local git
+
+Run `./.setup_git_repo.sh` to initialize the local git repository, configure `user.name` and `user.email` - local by default; only triggered if neither exists yet - and create an initial commit.
+
 ## Installation
 
 ### uv
@@ -104,40 +144,6 @@ Accessible from `{{ cookiecutter.package_name }}.plotting`.
 Accessible from `{{ cookiecutter.package_name }}.stats`.
 
 - `is_outlier`: identifies putative outlier observations based on median absolute deviations.
-
-## Repository setup
-
-The project includes a script to automate setting up a corresponding GitHub repository that consists of three steps:
-1. repository creation (optional)
-2. setting the remote
-3. mimicking the predefined labels `bug`, `feature`, `enhancement`, `refactor`, `chore`, `performance`, `debugging`, `research`, `documentation`, `duplicate`, `invalid`, `wontfix`.
-
-The script uses the [GitHub CLI](https://cli.github.com/), and at least a [fine-grained personal access token](https://github.com/settings/personal-access-tokens/new) (PAT) with:
-
-- **Expiration:** shortest custom date available.
-- **Repository access:**
-  - the repo does not yet exist &rarr; *All repositories*
-  - the repo exists &rarr; *Only select repositories* with the corresponding repository selected
-- **Permissions:** when creating the repo, the following three permissions are required; omit the first one otherwise.
-
-| Permission | Level |
-| --- | --- | --- |
-| Administration | Read and write |
-| Contents | Read and write |
-| Issues | Read and write |
-
-The script creates a private repository via the `--create` argument; for a public one pass `--public` in addition; to keep any additional labels, pass `--keep-extra-labels`.
-
-```bash
-git init
-./.setup_gh_repo.sh --create
-```
-
-The PAT that the script asked for is never exposed outside of `gh`'s credential helper. To only sync labels, run `./.sync_gh_labels.sh`.
-
-For the Jupyter Book to deploy on push to `main`, set up the repository once:
-- `Settings > Actions > General > Workflow permissions`: allow read and write permissions.
-- `Settings > Pages > Build and deployment`: set `GitHub Actions` as Source.
 
 ## Things to keep in mind
 

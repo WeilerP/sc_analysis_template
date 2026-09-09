@@ -18,7 +18,7 @@ done
 
 repo_slug="{{ cookiecutter.github_namespace }}/{{ cookiecutter.github_repo_name }}"
 
-# New GitHub repos com with default labels which the platform generates asynchronously, i.e., `gh repo create` can
+# New GitHub repos come with default labels which the platform generates asynchronously, i.e., `gh repo create` can
 # finish before all labels exist. Syncing to modify labels before all default fiels exist can make `gh label create`
 # collide with defaults appearing mid-run.
 # Workaround: waint until all default labels have been generated.
@@ -42,6 +42,8 @@ wait_for_default_labels() {
   echo "Default labels on $repo_slug did not settle; continuing." >&2
 }
 
+./.setup_git_repo.sh
+
 source ./.gh_auth.sh
 
 if [ "$create" = true ]; then
@@ -52,6 +54,9 @@ if [ "$create" = true ]; then
 fi
 
 ./.set_gh_remote.sh
+if [ "$create" = true ]; then
+  git push -u origin HEAD:main
+fi
 sync_args=()
 [ "$keep_extra_labels" = true ] && sync_args+=(--keep-extra-labels)
 ./.sync_gh_labels.sh "${sync_args[@]}"
