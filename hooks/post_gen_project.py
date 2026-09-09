@@ -4,12 +4,13 @@ import re
 
 PACKAGE_NAME = "{{ cookiecutter.package_name }}"
 
-# The template source can't use `from {{ cookiecutter.package_name }} import ...` directly,
-# since a raw Jinja token in import position isn't valid Python. Instead it bootstraps a
-# thin `_import(module, *names)` helper (see src/{{ cookiecutter.package_name }}/_import_shim.py)
-# and calls it, keeping the unrendered template files themselves valid, lintable Python.
-# After generation, this hook rewrites every call site back into a plain import statement,
-# strips the now-unused bootstrap lines, and deletes the shim module.
+# Raw Jinja tokens in import positions are invalid Python, restricting import statements:
+# 1. cannot use the global import `from {{ cookiecutter.package_name }} import ...` in shipped scripts,
+# 2. cannot import with an absolute reference to sibling submodules (`from {{ cookiecutter.package_name }}.x import y`)
+
+# Workaround for 1: use `_import(module, *names)` helper (see `src/{{ cookiecutter.package_name }}/_import_shim.py`) to
+# make Python linter pass. After generation, the `prettify_text` hook greps all of these instances via `_replace_call`
+# and turns them into canonical import statements and deletes them shim file.
 BOOTSTRAP_RE = re.compile(
     r"^import importlib\n\n?"
     r"_import = importlib\.import_module\(\"[^\"]*\._import_shim\"\)\.import_names\n\n?",
@@ -17,27 +18,23 @@ BOOTSTRAP_RE = re.compile(
 )
 CALL_RE = re.compile(r"^(?P<lhs>.*)= _import\((?P<args>[^()]*)\)[ \t]*$", re.MULTILINE)
 
-# Modules *inside* the package have the same problem in the other direction: they can reach a sibling
-# subpackage with a parent-relative import, but not name the package absolutely while unrendered. The
-# relative form trips ruff's TID252, so the template writes it with an explicit suppression and this hook
-# rewrites it into the absolute import the rule asks for, dropping the then-unnecessary suppression.
+# Workaround for 2: relative imports trigger ruff's TID252, requiring explicitly suppressing it before generating the
+# project. The `prettify_text` hook greps all of these instances via `_absolutize_import` and makes the imports absolute
 PARENT_IMPORT_RE = re.compile(
     r"^from \.\.(?P<module>[\w.]+) import (?P<names>[^#\n]+?)[ \t]*# noqa: TID252[ \t]*$",
     re.MULTILINE,
 )
-# `PARENT_IMPORT_RE` requires the trailing suppression comment to name TID252 alone and to end the line, so
-# a variant carrying further codes or trailing text keeps its suppression and would silently ship a
-# non-canonical relative import. This looser pattern catches whatever the strict one left behind. It
-# deliberately anchors on `from ..` so it does not fire on the pattern string and comments above, which this
-# hook is itself checked against by `_check_import_calls.py`.
+# The `PARENT_IMPORT_RE` regex logic expects `TID252` as the only lint expression and to mark the end of the line. This
+# variant catches the cases untouched by the stricter check. The anchor on `from ..` is deliberate to not grep the
+# previous pattern string; `_check_import_calls.py` performs the relevant check.
 UNREWRITTEN_IMPORT_RE = re.compile(r"^from \.\..*# noqa: TID252.*$", re.MULTILINE)
 
-# Same idea for pyproject.toml's pixi self-dependency, which names the package in a TOML *key*
-# position: `pypi-dependencies."{{ cookiecutter.package_name }}"`. A raw Jinja token is not a legal
-# bare key, and that file doubles as ruff's config, so it must stay parseable while unrendered —
-# hence the quotes. Once rendered the key is a legal bare key, and pyproject-fmt (which runs in the
-# generated project, where the template's exclude no longer matches) strips the quotes itself. This
-# hook does it up front so the generated project is already canonical and its hooks pass unmodified.
+# Same problem for pixi self-dependencies in `pyproject.toml`: the package is in a TOML ket position (
+# `pypi-dependencies."{{ cookiecutter.package_name }}"`), i.e., an illegal bare key. The file is ruff's config, so it
+# must stay parsebale before rendering.
+# Workaround: wrap the Jinja token in quotation marks. Rendering makes the substituted key a legal bare key for which
+# pyproject-fmt strips the quotes directly. This hook does this step up fromt to deliver a generated project in
+# canonical form whose hooks pass cleanly.
 PIXI_KEY_RE = re.compile(r"^(pypi-dependencies\.)\"([^\"]+)\"(\s*=)", re.MULTILINE)
 
 

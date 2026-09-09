@@ -16,10 +16,9 @@ repos:
     rev: v2.21.1
     hooks:
       - id: pyproject-fmt
-        # pyproject-fmt applies PEP 503 name-normalization to `project.name`, which
-        # corrupts the raw Jinja token here (`.` -> `-`) since it isn't Jinja-aware.
-        # The rendered pyproject.toml in a generated project is unaffected (its own
-        # .pre-commit-config.yaml runs this hook on real, already-rendered content).
+        # pyproject-fmt is not aware of Jinja token names, so normalizing names with PEP 503 corrupts `project.name`
+        # The rendered pyproject.toml in a generated project is unaffected because its own `.pre-commit-config.yaml`
+        # runs this hook on rendered text.
         exclude: '^\{\{ cookiecutter\.project_name \}\}/pyproject\.toml$'
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.15.11
