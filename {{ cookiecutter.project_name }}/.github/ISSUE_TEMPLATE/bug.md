@@ -35,10 +35,10 @@ assignees: ""
 Run this in a notebook, then click the "Copy as Markdown" button and paste the result here:
 
 ```pycon
-import gmi, session_info2; session_info2.session_info(dependencies=True)
+import {{ cookiecutter.package_name }}, session_info2; session_info2.session_info(dependencies=True)
 ```
 
-Or from the pixi environment shell (do not use `uvx` for this — it won't see gmi's installed dependencies):
+Or from the pixi environment shell (do not use `uvx` for this — it won't see {{ cookiecutter.package_name }}'s installed dependencies):
 
 ```shell
 session-info2 -f markdown
