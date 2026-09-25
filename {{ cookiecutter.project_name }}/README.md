@@ -109,7 +109,7 @@ pixi add  --frozen --feature pyXY python=X.Y
 pixi workspace environment add {{ cookiecutter.package_name }}-pyXY --feature pyXY --feature dev --feature jupyter
 pixi add --pypi --editable --no-install --frozen "{{ cookiecutter.package_name }} @ file://$(pwd)"
 pixi install -e {{ cookiecutter.package_name }}-pyXY
-pixi run setup-pre-commit
+pixi run -e {{ cookiecutter.package_name }}-pyXY setup-pre-commit
 
 # Optional: Add jupyter kernel
 pixi run ipython kernel install --user --env VIRTUAL_ENV .pixi/envs/{{ cookiecutter.package_name }}-pyXY --name {{ cookiecutter.package_name }}-pyXY --display-name "{{ cookiecutter.package_name }}-pyX.Y"
