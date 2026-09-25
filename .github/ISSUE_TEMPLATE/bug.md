@@ -35,7 +35,7 @@ assignees: ""
 Run this in a notebook, then click the "Copy as Markdown" button and paste the result here:
 
 ```pycon
-import gmi, session_info2; session_info2.session_info(dependencies=True)
+import package_name, session_info2; session_info2.session_info(dependencies=True)
 ```
 
 Or from the pixi environment shell (do not use `uvx` for this — it won't see gmi's installed dependencies):
