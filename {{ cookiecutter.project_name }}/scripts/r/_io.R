@@ -23,12 +23,11 @@ write_zarr_zip <- function(adata, path) {
   zarr <- import("zarr")
   store <- zarr$storage$ZipStore(path, mode = "w")
 
-  # Suppress Python UserWarnings during write (equivalent to Python's `with` statement)
-  # Manually call context manager protocol: __enter__ and __exit__
-  warnings$catch_warnings()$`__enter__`()
-  warnings$simplefilter("ignore", category = warnings$UserWarning)
-  adata$write_zarr(store)
-  warnings$catch_warnings()$`__exit__`(NULL, NULL, NULL)
+  # Suppress Python UserWarnings during write; reticulate's with() mirrors Python's `with` statement
+  with(warnings$catch_warnings(), {
+    warnings$simplefilter("ignore", category = import_builtins()$UserWarning)
+    adata$write_zarr(store)
+  })
 
   store$close()
 }
