@@ -55,6 +55,7 @@ repos:
       - id: lintr
         additional_dependencies:
             - reticulate # scripts/r/_io.R calls into Python via reticulate::import()
+            - this.path # scripts/r/*.R locate helper scripts via this.path::this.dir()
       - id: parsable-R
       - id: no-debug-statement
       - id: no-print-statement
