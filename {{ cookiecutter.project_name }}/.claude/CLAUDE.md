@@ -88,21 +88,7 @@ When confused: stop, think, present theories, get signoff. Never silently retry 
 
 ## Setup
 
-```bash
-uv venv
-uv sync --all-groups
-uv run pre-commit install
-```
-
-See `README.md`'s "Repository setup" section for creating the GitHub repo, authenticating via `gh`, and syncing the issue-label taxonomy.
-
-## Development commands
-
-```bash
-uv run pre-commit run --all-files
-```
-
-There are no tests. Development is notebook-driven.
+See @../README.md for installation instructions and how to run pre-commit hooks. There are no tests. Development is notebook-driven.
 
 ## Code conventions
 
