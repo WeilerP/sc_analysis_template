@@ -63,7 +63,7 @@ For the Jupyter Book to deploy on push to `main`, set up the repository once:
 
 Run `./.setup_git_repo.sh` to initialize the local git repository, configure `user.name` and `user.email` - local by default; only triggered if neither exists yet - and create an initial commit.
 
-## Installation
+## Setup
 
 ### uv
 
@@ -112,8 +112,16 @@ pixi install -e {{ cookiecutter.package_name }}-pyXY
 pixi run -e {{ cookiecutter.package_name }}-pyXY setup-pre-commit
 
 # Optional: Add jupyter kernel
-pixi run ipython kernel install --user --env VIRTUAL_ENV .pixi/envs/{{ cookiecutter.package_name }}-pyXY --name {{ cookiecutter.package_name }}-pyXY --display-name "{{ cookiecutter.package_name }}-pyX.Y"
+pixi run -e {{ cookiecutter.package_name }}-pyXY python -m ipykernel install --user --name {{ cookiecutter.package_name }}-pyXY --display-name {{ cookiecutter.package_name }}-pyX.Y
 ```
+
+To run pre-commit hooks, use
+
+```bash
+pixi run -e {{ cookiecutter.package_name }}-pyXY run-pre-commit
+```
+
+for an environment with a specific name; otherwise, omit the `-e` part.
 
 ## Package utilities
 
