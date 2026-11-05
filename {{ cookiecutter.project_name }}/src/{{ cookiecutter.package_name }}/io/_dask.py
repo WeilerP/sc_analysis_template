@@ -78,7 +78,7 @@ def read_as_dask(
     varp_keys: str | list[str] | None = None,
     backend: Literal["anndata", "treedata"] = "anndata",
 ) -> AnnData | TreeData:
-    """Read AnnData with dask.
+    """Read AnnData-like objects with dask.
 
     ```python
     store = zarr.storage.ZipStore(path / to / store.zarr.zip)
@@ -87,6 +87,12 @@ def read_as_dask(
     obs_mask = adata.obs[column] == group
     adata_subset = adata[obs_mask, :].to_memory()
     ```
+
+    Warnings
+    --------
+    Lazy-loaded objects read the store when first computed. If the store is replaced, re-read it before using lazy
+    objects. Otherwise, they fail (new objects has a differnt shape) or return the new data (if the shape stayed
+    unchanged).
 
     Parameters
     ----------
