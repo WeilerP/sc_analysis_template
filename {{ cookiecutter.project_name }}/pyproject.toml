@@ -66,6 +66,10 @@ envs.hatch-test.overrides.matrix.deps.env-vars = [
 workspace.channels = [ "conda-forge" ]
 workspace.platforms = [ "linux-64", "osx-64", "osx-arm64", "win-64" ]
 pypi-dependencies."{{ cookiecutter.package_name }}" = { path = ".", editable = true }
+tasks.copy-notebook-bare.args = [ "bare_copy_fname", "orig_fname" ]
+tasks.copy-notebook-bare.cmd = "{% raw %}jupyter nbconvert --ClearOutputPreprocessor.enabled=True --to notebook --output {{ bare_copy_fname }} {{ orig_fname }}{% endraw %}"
+tasks.execute-notebook.args = [ "old_fname", "new_fname" ]
+tasks.execute-notebook.cmd = "{% raw %}jupyter nbconvert --to notebook --execute {{ old_fname }} --output {{ new_fname }}{% endraw %}"
 tasks.run-pre-commit = "bash -c 'if [ $# -eq 0 ]; then pre-commit run --all-files; else pre-commit run --files \"$@\"; fi' _"
 tasks.setup-pre-commit = "pre-commit install"
 environments.default = { features = [ "dev", "jupyter" ], solve-group = "default" }
