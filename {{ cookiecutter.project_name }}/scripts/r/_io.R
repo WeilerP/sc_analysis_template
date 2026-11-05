@@ -1,5 +1,11 @@
 library("reticulate")
 
+# anndata>=0.13 exposes AnnData as `anndata.AnnData`; R anndata only registers a converter for the pre-0.13 class path.
+registerS3method(
+  "py_to_r", "anndata.AnnData", anndata:::py_to_r.anndata._core.anndata.AnnData,
+  envir = asNamespace("reticulate")
+)
+
 read_zarr_zip <- function(path) {
   zarr <- import("zarr")
   anndata_py <- import("anndata")
