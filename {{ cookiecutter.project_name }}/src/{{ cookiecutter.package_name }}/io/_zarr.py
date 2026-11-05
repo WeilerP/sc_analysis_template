@@ -17,6 +17,11 @@ if TYPE_CHECKING:
 def write_zarr(data: AnnData | MuData | TreeData, path: Path) -> None:
     """Write AnnData-like object to hierarchical Zarr array zip store.
 
+    Warnings
+    --------
+    Overwriting a lazily loaded object to the same path it was loaded from truncates the source before it is read; i.e.,
+    the write fails and the data is lost. Either write to a different path instead or load it into memory before saving.
+
     Parameters
     ----------
     data
