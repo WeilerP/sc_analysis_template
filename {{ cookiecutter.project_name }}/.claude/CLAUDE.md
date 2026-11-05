@@ -106,3 +106,5 @@ See @../README.md for installation instructions and how to run pre-commit hooks.
 
 - Store datasets as Zarr zip archives unless told otherwise; use the `write_zarr` helper function from `{{ cookiecutter.package_name }}.io`
 - Read Zarr zip archives with the `read_as_dask` helper function from `{{ cookiecutter.package_name }}.io` and only load data into memory if needed
+- Do not write lazily-loaded objects to the same Zarr store they were loaded from → requires loading data into memory first
+- Reload lazily-loaded objects when the original file changed
