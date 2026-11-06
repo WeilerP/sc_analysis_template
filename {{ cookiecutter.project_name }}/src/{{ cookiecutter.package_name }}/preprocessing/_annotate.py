@@ -2,7 +2,7 @@ import warnings
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from ..io import get_chrom_from_gtf  # noqa: TID252
+from ..io import read_chrom_from_gtf  # noqa: TID252
 
 if TYPE_CHECKING:
     from anndata import AnnData
@@ -30,7 +30,7 @@ def add_chromosome_info(adata: AnnData, gtf_path: str | Path, gene_id_column: st
         )
         return
 
-    chromosome = adata.var[gene_id_column].map(get_chrom_from_gtf(gtf_path))
+    chromosome = adata.var[gene_id_column].map(read_chrom_from_gtf(gtf_path))
 
     n_unmapped = int(chromosome.isna().sum())
     if n_unmapped:
