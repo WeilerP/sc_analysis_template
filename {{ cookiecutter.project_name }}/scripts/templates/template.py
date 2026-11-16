@@ -18,7 +18,7 @@ DATA_DIR, FIG_DIR = _import("{{ cookiecutter.package_name }}", "DATA_DIR", "FIG_
 # ## General settings
 
 # %%
-SAVE_DATE = True
+SAVE_DATA = True
 SAVE_FIGURES = False
 
 # %% [markdown]
@@ -26,7 +26,7 @@ SAVE_FIGURES = False
 
 # %%
 DATASET_ID = ""
-if SAVE_DATE:
+if SAVE_DATA:
     (DATA_DIR / DATASET_ID / "processed").mkdir(parents=True, exist_ok=True)
     (DATA_DIR / DATASET_ID / "results").mkdir(parents=True, exist_ok=True)
 
